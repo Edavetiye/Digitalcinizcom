@@ -50,3 +50,8 @@
 - Her müşteri için ayrı yayın bağlantısı oluşturulur.
 - Bir müşteride yapılan değişiklik başka müşteriyi etkilemez.
 - Her müşteri bağımsız proje olarak saklanır.
+- Her yeni müşteri için master şablonun kopyası oluşturulur.
+- Orijinal şablon hiçbir zaman değiştirilmez.
+- Her müşteri için ayrı GitHub deposu oluşturulur.
+- Her müşteri için ayrı GitHub Pages bağlantısı oluşturulur.
+- Müşteri onayı alınmadan yayın yapılmaz.
