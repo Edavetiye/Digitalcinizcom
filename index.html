@@ -1,154 +1,158 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Prensesimiz Zeynep 4 Yaşında</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Davetiye Şablonları</title>
 <style>
-  :root{ --bg-top:#c8b3dd; --bg-bottom:#f3d3dd; }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;width:100%;
-    background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
-    overflow:hidden;-webkit-tap-highlight-color:transparent;font-family:"Segoe UI",Roboto,system-ui,sans-serif;}
-  #app{position:fixed;inset:0;overflow:hidden;}
-  .fill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
+  :root{
+    --paper:#FBF7EF; --surface:#FFFDF8; --surface-2:#F3EBD9;
+    --ink:#3E3122; --ink-soft:#8A7658; --line:rgba(120,96,62,.18);
+    --gold:#C58C2C; --gold-deep:#A9741E; --sage:#6E7F4E;
+    --shadow:0 18px 42px -26px rgba(90,70,50,.5), 0 3px 10px -6px rgba(90,70,50,.25);
+    --radius:20px;
+    --ff-display:Georgia,"Times New Roman",serif;
+    --ff-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#1C1710; --surface:#2A2218; --surface-2:#332A1D;
+      --ink:#EFE6D5; --ink-soft:#B7A488; --line:rgba(220,200,160,.16);
+      --gold:#E2AE4A; --gold-deep:#C58C2C; --sage:#9BAE73;
+      --shadow:0 20px 46px -26px rgba(0,0,0,.7), 0 3px 10px -6px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#FBF7EF; --surface:#FFFDF8; --surface-2:#F3EBD9;
+    --ink:#3E3122; --ink-soft:#8A7658; --line:rgba(120,96,62,.18);
+    --gold:#C58C2C; --gold-deep:#A9741E; --sage:#6E7F4E;
+    --shadow:0 18px 42px -26px rgba(90,70,50,.5), 0 3px 10px -6px rgba(90,70,50,.25);
+  }
+  :root[data-theme="dark"]{
+    --paper:#1C1710; --surface:#2A2218; --surface-2:#332A1D;
+    --ink:#EFE6D5; --ink-soft:#B7A488; --line:rgba(220,200,160,.16);
+    --gold:#E2AE4A; --gold-deep:#C58C2C; --sage:#9BAE73;
+    --shadow:0 20px 46px -26px rgba(0,0,0,.7), 0 3px 10px -6px rgba(0,0,0,.5);
+  }
 
-  #cover{z-index:2;cursor:pointer;will-change:transform,opacity;transition:opacity .32s ease;animation:breathe 3.2s ease-in-out infinite;}
-  #cover.opening{animation:none;transition:opacity .32s ease, transform .5s ease;transform:scale(1.045);}
-  @keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.012);}}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--ff-body); color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, var(--surface-2) 0%, var(--paper) 55%);
+    min-height:100dvh; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    line-height:1.55;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:clamp(28px,6vw,72px) clamp(18px,4vw,32px) 64px;}
 
-  #vid{z-index:3;opacity:0;transition:opacity .35s ease;pointer-events:none;background:transparent;}
+  header{text-align:center; margin-bottom:clamp(28px,5vw,48px);}
+  .eyebrow{
+    font-size:12px; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--gold-deep); font-weight:700; margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--ff-display); font-weight:700; color:var(--ink);
+    font-size:clamp(30px,6vw,46px); line-height:1.08; margin:0 0 12px;
+    text-wrap:balance; letter-spacing:-.01em;
+  }
+  .lede{color:var(--ink-soft); font-size:clamp(15px,2.4vw,17px); max-width:46ch; margin:0 auto;}
 
-  #flash{z-index:4;position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .55s ease;
-    background:radial-gradient(circle at 50% 46%, rgba(255,244,214,.92) 0%, rgba(255,228,176,.55) 38%, rgba(255,214,150,0) 70%);}
+  .cat{display:flex; align-items:center; gap:14px; margin:8px 0 22px;}
+  .cat__label{
+    font-family:var(--ff-body); font-size:13px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ink-soft); font-weight:700; white-space:nowrap;
+  }
+  .cat__rule{height:1px; background:var(--line); flex:1;}
+  .cat__count{
+    font-size:12px; color:var(--ink-soft); background:var(--surface-2);
+    border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-weight:600;
+  }
 
-  #invite{z-index:5;position:absolute;inset:0;opacity:0;transition:opacity .85s ease;
-    display:flex;align-items:center;justify-content:center;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;pointer-events:none;}
-  #invite.active{pointer-events:auto;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:clamp(16px,3vw,26px);}
 
-  /* Animasyonlu davetiye videosu çerçeveyi belirler; overlay'ler videoyla aynı koordinat sisteminde */
-  #frame{position:relative;width:100%;max-width:460px;margin:auto;container-type:inline-size;}
-  #ivid{display:block;width:100%;height:auto;aspect-ratio:720/1280;object-fit:cover;background:var(--bg-bottom);}
+  .card{
+    display:flex; flex-direction:column; background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+    text-decoration:none; color:inherit; box-shadow:var(--shadow);
+    transition:transform .22s cubic-bezier(.2,.7,.2,1), box-shadow .22s ease, border-color .22s ease;
+  }
+  .card:hover{transform:translateY(-4px); box-shadow:0 26px 54px -28px rgba(80,60,40,.55); border-color:rgba(197,140,44,.5);}
+  .card:focus-visible{outline:3px solid var(--gold); outline-offset:3px;}
+  .thumb{position:relative; aspect-ratio:3/4; background:var(--surface-2); overflow:hidden;}
+  .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .thumb__tag{
+    position:absolute; top:12px; left:12px; z-index:2;
+    background:rgba(255,253,248,.92); color:var(--gold-deep);
+    font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    padding:5px 10px; border-radius:999px; box-shadow:0 4px 12px -6px rgba(0,0,0,.35);
+  }
+  .body{padding:16px 18px 18px; display:flex; flex-direction:column; gap:6px; flex:1;}
+  .title{font-family:var(--ff-display); font-size:20px; font-weight:700; margin:0; color:var(--ink);}
+  .desc{font-size:14px; color:var(--ink-soft); margin:0; flex:1;}
+  .open{
+    display:inline-flex; align-items:center; gap:7px; margin-top:10px;
+    font-size:14px; font-weight:700; color:var(--gold-deep);
+  }
+  .open svg{width:16px; height:16px; transition:transform .2s ease;}
+  .card:hover .open svg{transform:translateX(3px);}
 
-  /* Görünmez, çalışan buton alanları (animasyondaki butonların üzerinde) */
-  .hotspot{position:absolute;display:block;background:transparent;border:0;cursor:pointer;border-radius:100px;
-    -webkit-tap-highlight-color:transparent;transition:transform .12s ease, filter .12s ease;}
-  .hotspot:active{transform:scale(.97);filter:brightness(1.06);}
-  /* Konum + Katılım butonları (ölçülen konumlar) */
-  #btnMap{  left:17.5%; top:69.3%; width:27.0%; height:5.8%; }
-  #btnRsvp{ left:52.5%; top:69.3%; width:33.5%; height:5.8%; }
+  footer{text-align:center; color:var(--ink-soft); font-size:13px; margin-top:clamp(36px,6vw,56px);}
+  footer .heart{color:var(--gold-deep);}
 
-  /* Canlı geri sayım — konumu ekran görüntüsüne göre ayarlanacak.
-     İnce ayar: aşağıdaki 4 kutunun left/top ve gerekiyorsa .cd width/height/font-size. */
-  .cd{position:absolute;transform:translate(-50%,-50%);
-    width:11%;height:3.7%;display:flex;align-items:center;justify-content:center;border-radius:16%;
-    background:linear-gradient(180deg,#f6d6cf 0%,#f2c3ba 100%);
-    color:#c8506d;font-family:Georgia,"Times New Roman",serif;font-weight:700;
-    font-size:6cqw;line-height:1;letter-spacing:.5px;text-shadow:0 1px 0 rgba(198,150,84,.55);overflow:hidden;}
-  /* "Kalan Süre" başlığı — sayacın hemen üstünde */
-  #cdLabel{position:absolute;left:51.5%;top:79.6%;transform:translate(-50%,-50%);
-    color:#c8506d;font-family:Georgia,"Times New Roman",serif;font-weight:700;
-    font-size:4.2cqw;letter-spacing:1px;white-space:nowrap;
-    text-shadow:0 1px 0 rgba(198,150,84,.5);}
-  #cdGun{ left:29.8%; top:84.0%; }
-  #cdSaat{ left:44.3%; top:84.0%; }
-  #cdDak{ left:58.7%; top:84.0%; }
-  #cdSan{ left:73.2%; top:84.0%; }
+  @media (prefers-reduced-motion: reduce){
+    .card, .open svg{transition:none;}
+    .card:hover{transform:none;}
+  }
 </style>
 </head>
 <body>
-  <div id="app">
-    <img id="cover" class="fill" src="assets/kapak.png" alt="Açmak için dokun">
-    <video id="vid" class="fill" muted playsinline webkit-playsinline preload="auto"></video>
-    <div id="flash"></div>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">E&#8209;Davetiye</p>
+      <h1>Davetiye Şablonları</h1>
+      <p class="lede">Her tema, dokununca açılan animasyonlu bir davetiyedir. Bir tema seçin ve önizleyin.</p>
+    </header>
 
-    <section id="invite">
-      <div id="frame">
-        <video id="ivid" loop muted playsinline webkit-playsinline preload="auto"></video>
-        <a id="btnMap"  class="hotspot" href="#" target="_blank" rel="noopener" aria-label="Konumu Gör"></a>
-        <a id="btnRsvp" class="hotspot" href="#" target="_blank" rel="noopener" aria-label="Katılım Bildir"></a>
-        <div id="cdLabel">Kalan Süre</div>
-        <div id="cdGun" class="cd">--</div>
-        <div id="cdSaat" class="cd">--</div>
-        <div id="cdDak" class="cd">--</div>
-        <div id="cdSan" class="cd">--</div>
+    <section aria-labelledby="cat-dogumgunu">
+      <div class="cat">
+        <span class="cat__label" id="cat-dogumgunu">Doğum Günü</span>
+        <span class="cat__rule"></span>
+        <span class="cat__count">2 tema</span>
+      </div>
+
+      <div class="grid">
+        <a class="card" href="dogum-gunu/hediye-kutu-acilimi/">
+          <div class="thumb">
+            <span class="thumb__tag">Hediye Kutusu</span>
+            <img src="dogum-gunu/hediye-kutu-acilimi/assets/kapak.png" alt="Hediye kutu açılımı teması kapağı" loading="lazy" />
+          </div>
+          <div class="body">
+            <p class="title">Hediye Kutu Açılımı</p>
+            <p class="desc">Işıltılı hediye kutusu açılır, animasyonlu davetiye ve canlı geri sayım belirir.</p>
+            <span class="open">Aç
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="dogum-gunu/sevimli-hayvanlar-yagli-boya/">
+          <div class="thumb">
+            <span class="thumb__tag">Yağlı Boya</span>
+            <img src="dogum-gunu/sevimli-hayvanlar-yagli-boya/assets/kapak.jpg" alt="Sevimli hayvanlar yağlı boya teması kapağı" loading="lazy" />
+          </div>
+          <div class="body">
+            <p class="title">Sevimli Hayvanlar Yağlı Boya</p>
+            <p class="desc">Sulu boya sevimli hayvanlar; zarf açılışı, fotoğraflı kart ve kaydırmalı davetiye.</p>
+            <span class="open">Aç
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
       </div>
     </section>
+
+    <footer>Sevgiyle hazırlandı <span class="heart">&#9829;</span></footer>
   </div>
-
-
-<script>
-/* ===================== AYARLAR ===================== */
-const CONFIG = {
-  eventDate: "2026-08-30T14:00:00+03:00",
-  countdownLabel: "Kalan Süre",                    // "Kalan Zaman" da yazabilirsiniz
-  mapsUrl:  "https://www.google.com/maps/search/?api=1&query=Masal%20Bah%C3%A7esi%20K%C4%B1r%20Bah%C3%A7esi",
-  rsvpUrl:  "https://wa.me/905555555555?text=" +
-            encodeURIComponent("Prensesimiz Zeynep'in 4. yaş davetine katılmak istiyorum \uD83D\uDC96")
-};
-/* =================================================== */
-
-const cover=document.getElementById('cover'), vid=document.getElementById('vid'),
-      flash=document.getElementById('flash'), invite=document.getElementById('invite'),
-      ivid=document.getElementById('ivid');
-
-document.getElementById('cdLabel').textContent = CONFIG.countdownLabel;
-document.getElementById('btnMap').href  = CONFIG.mapsUrl;
-document.getElementById('btnRsvp').href = CONFIG.rsvpUrl;
-
-/* Videolar assets klasöründen yüklenir */
-try{ vid.src  = "assets/kutu-acilis.mp4"; vid.load(); }catch(e){}
-try{ ivid.src = "assets/davetiye.mp4";    ivid.load(); }catch(e){}
-
-let opened=false, revealing=false, safety=null;
-
-vid.addEventListener('loadeddata', ()=>{ try{const p=vid.play(); if(p&&p.then)p.then(()=>{vid.pause();vid.currentTime=0;}).catch(()=>{});}catch(e){} }, {once:true});
-
-function openBox(){
-  if(opened) return; opened=true; cover.classList.add('opening');
-  const showVideo=()=>{ vid.style.opacity='1'; setTimeout(()=>{cover.style.opacity='0';},260); };
-  try{ vid.currentTime=0; }catch(e){}
-  const p=vid.play();
-  vid.addEventListener('playing', ()=>requestAnimationFrame(showVideo), {once:true});
-  if(p&&p.then) p.then(()=>requestAnimationFrame(showVideo)).catch(showVideo);
-  setTimeout(showVideo,500);
-  const dur=(vid.duration&&isFinite(vid.duration))?vid.duration:7;
-  safety=setTimeout(finishReveal,(dur+1.2)*1000);
-}
-cover.addEventListener('click',openBox);
-cover.addEventListener('touchend',e=>{e.preventDefault();openBox();},{passive:false});
-
-vid.addEventListener('timeupdate',()=>{ if(vid.duration&&isFinite(vid.duration)&&vid.currentTime>=vid.duration-0.5) startReveal(); });
-vid.addEventListener('ended',finishReveal);
-
-function startReveal(){
-  if(revealing) return; revealing=true;
-  flash.style.opacity='0.5';
-  invite.style.opacity='1';
-  try{ ivid.currentTime=0; ivid.play(); }catch(e){}   // animasyonlu davetiye döngüde başlar
-}
-function finishReveal(){
-  startReveal();
-  if(safety){clearTimeout(safety);safety=null;}
-  vid.style.transition='opacity .7s ease'; vid.style.opacity='0';
-  setTimeout(()=>{flash.style.opacity='0';},150);
-  setTimeout(()=>{invite.classList.add('active');},200);
-  setTimeout(()=>{vid.style.display='none';flash.style.display='none';cover.style.display='none';},1100);
-}
-
-/* Canlı geri sayım */
-const elGun=document.getElementById('cdGun'), elSaat=document.getElementById('cdSaat'),
-      elDak=document.getElementById('cdDak'), elSan=document.getElementById('cdSan');
-const target=new Date(CONFIG.eventDate).getTime();
-const pad=n=>String(n).padStart(2,'0');
-function tick(){
-  let d=target-Date.now(); if(d<0)d=0; const s=Math.floor(d/1000);
-  elGun.textContent=pad(Math.floor(s/86400));
-  elSaat.textContent=pad(Math.floor((s%86400)/3600));
-  elDak.textContent=pad(Math.floor((s%3600)/60));
-  elSan.textContent=pad(s%60);
-}
-tick(); setInterval(tick,1000);
-</script>
 </body>
 </html>
