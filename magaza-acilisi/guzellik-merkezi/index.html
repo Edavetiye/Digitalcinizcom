@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1A0305">
+<title>Güzellik Merkezi · Büyük Açılış Daveti</title>
+<meta name="description" content="Güzellik Merkezi büyük açılışına özel dijital davetiye.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@500;700;900&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   STORE-001 · Mağaza / Güzellik Merkezi Açılış Davetiyesi
+   Tasarım referansı: 941 x 1672 (9:16) — tüm ölçüler referans
+   pikselinden türetilir:  P px  ->  calc(P * var(--k))
+   ============================================================ */
+:root{
+  --u: min(1vw, 4.7px);          /* sayfa kolonunun %1'i */
+  --k: calc(var(--u) * 0.10627); /* referans piksel birimi  */
+
+  --ink:#F4EADB;
+  --ink-soft:#E4D3B8;
+
+  --gold-1:#F6E3B0;
+  --gold-2:#E9C57C;
+  --gold-3:#D2A354;
+  --gold-4:#A9762A;
+  --gold-5:#6E4813;
+  --gold-line:rgba(214,166,90,.75);
+  --gold-line-soft:rgba(196,146,70,.38);
+
+  --wine-1:#3A0A0D;
+  --wine-2:#26050700;
+  --panel: linear-gradient(160deg, rgba(74,12,17,.92) 0%, rgba(41,6,9,.94) 45%, rgba(58,9,14,.92) 100%);
+
+  --ease:cubic-bezier(.22,.61,.24,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#180205;
+  color:var(--ink);
+  font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  overflow-x:hidden;
+  min-height:100dvh;
+}
+body.locked{overflow:hidden;height:100dvh}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+
+/* ---------- KADİFE PERDE ARKA PLAN (Referans 1) ---------- */
+.velvet{position:fixed;inset:0;z-index:0;pointer-events:none}
+.velvet::before{
+  content:"";position:absolute;inset:0;
+  background-image:url("assets/doku.jpg");
+  background-size:100% auto;background-position:top center;background-repeat:repeat-y;
+}
+.velvet::after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(120,32,26,.30) 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(100% 60% at 50% 100%, rgba(90,20,18,.22) 0%, rgba(0,0,0,0) 65%),
+    linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,.62) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 72%, rgba(0,0,0,.50) 100%);
+}
+
+/* ============================================================
+   1. KAPAK  →  VIDEO  →  DAVETİYE   (kullanıcı dokunana kadar hiçbir şey çalışmaz)
+   ============================================================ */
+#cover{
+  position:fixed;inset:0;z-index:40;
+  display:grid;place-items:center;
+  cursor:pointer;
+  opacity:1;
+  transition:opacity .35s var(--ease);
+}
+#cover.gone{opacity:0;pointer-events:none}
+
+.stage{
+  position:relative;
+  width:min(100vw, 470px, calc(100dvh * .5628));
+  aspect-ratio:941/1672;
+}
+.scene{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+
+
+/* ---- tam ekran açılış videosu ---- */
+#videoLayer{
+  position:fixed;inset:0;z-index:50;
+  background:#000;
+  display:none;
+  opacity:1;
+  transition:opacity .2s linear;
+}
+#videoLayer.on{display:block}
+#videoLayer.out{opacity:0}
+#videoLayer video{
+  width:100%;height:100%;object-fit:cover;background:#000;display:block;
+}
+/* ============================================================
+   2. DAVETİYE SAYFASI  (Referans 2)
+   ============================================================ */
+#invite{
+  position:relative;z-index:10;
+  opacity:0;visibility:hidden;
+  transform:translateY(calc(46 * var(--k))) scale(.95);
+  filter:blur(calc(9 * var(--k)));
+  transition:opacity 1s var(--ease-out), transform 1s var(--ease-out), filter 1s var(--ease-out);
+  will-change:transform,opacity,filter;
+}
+#invite.show{opacity:1;visibility:visible;transform:none;filter:blur(0)}
+
+.sheet{
+  width:min(100vw,470px);
+  margin:0 auto;
+  padding:calc(32 * var(--k)) 0 calc(70 * var(--k));
+  text-align:center;
+}
+
+/* --- ortak açılış animasyonu --- */
+.rv{opacity:0;transform:translateY(calc(26 * var(--k)));transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+/* --- logo --- */
+.logo{width:22.4%;margin:0 auto;filter:drop-shadow(0 calc(3 * var(--k)) calc(10 * var(--k)) rgba(0,0,0,.6))}
+
+/* --- mağaza adı --- */
+.brand{
+  margin:calc(4 * var(--k)) 0 0;
+  font-weight:600;font-size:calc(34 * var(--k));
+  letter-spacing:.30em;text-indent:.30em;
+  background:linear-gradient(180deg,#F8E9BE 0%,#E4BE72 45%,#B98A38 78%,#EBD49B 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* --- açılış başlığı --- */
+.head{
+  position:relative;
+  margin:calc(28 * var(--k)) 0 0;
+  font-weight:700;font-size:calc(62 * var(--k));line-height:1.02;
+  letter-spacing:.045em;
+  background-image:
+    linear-gradient(105deg,rgba(255,255,255,0) 42%,rgba(255,252,235,.85) 50%,rgba(255,255,255,0) 58%),
+    linear-gradient(180deg,#FCF1CE 0%,#E9C57C 40%,#B9873A 70%,#F3E1AC 100%);
+  background-size:200% 100%, 100% 100%;
+  background-position:-90% 0, 0 0;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 calc(2 * var(--k)) calc(7 * var(--k)) rgba(0,0,0,.65));
+}
+.head.in{animation:sheen 2.8s var(--ease) 1.1s 2}
+@keyframes sheen{
+  from{background-position:-90% 0, 0 0}
+  to{background-position:190% 0, 0 0}
+}
+
+.script{
+  margin:calc(-2 * var(--k)) 0 0;
+  font-family:"Pinyon Script",cursive;
+  font-size:calc(96 * var(--k));line-height:1.08;
+  padding-bottom:calc(10 * var(--k));
+  background:linear-gradient(180deg,#FBEFCC 0%,#E7C179 42%,#B4842F 72%,#F0DDA6 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 calc(2 * var(--k)) calc(8 * var(--k)) rgba(0,0,0,.6));
+}
+.orn-sm{width:21%;margin:calc(2 * var(--k)) auto 0;opacity:.95}
+
+.invite-text{
+  margin:calc(18 * var(--k)) auto 0;max-width:80%;
+  font-size:calc(30 * var(--k));line-height:1.42;
+  color:#F6EFE4;font-weight:400;
+  text-shadow:0 calc(2 * var(--k)) calc(6 * var(--k)) rgba(0,0,0,.7);
+}
+
+/* --- altın çerçeve (fotoğraf + kampanya kartı ortak) --- */
+.frame{position:relative;border:calc(2.2 * var(--k)) solid var(--gold-line);border-radius:calc(10 * var(--k))}
+.frame::before{
+  content:"";position:absolute;inset:calc(6 * var(--k));
+  border:1px solid var(--gold-line-soft);border-radius:calc(5 * var(--k));
+  pointer-events:none;z-index:2;
+}
+.frame .cnr{
+  position:absolute;width:calc(11 * var(--k));height:calc(11 * var(--k));
+  background:linear-gradient(135deg,var(--gold-1),var(--gold-4));
+  transform:rotate(45deg);z-index:3;
+}
+.frame .c1{left:calc(-6 * var(--k));top:calc(-6 * var(--k))}
+.frame .c2{right:calc(-6 * var(--k));top:calc(-6 * var(--k))}
+.frame .c3{left:calc(-6 * var(--k));bottom:calc(-6 * var(--k))}
+.frame .c4{right:calc(-6 * var(--k));bottom:calc(-6 * var(--k))}
+
+/* --- mağaza görseli --- */
+.photo{
+  margin:calc(24 * var(--k)) auto 0;width:79.7%;
+  overflow:hidden;
+  box-shadow:0 calc(12 * var(--k)) calc(34 * var(--k)) rgba(0,0,0,.55);
+}
+.photo img{width:100%;border-radius:calc(7 * var(--k))}
+
+/* --- kampanya / indirim kartı --- */
+.promo{
+  margin:calc(24 * var(--k)) auto 0;width:79.7%;
+  padding:calc(24 * var(--k)) 0 calc(20 * var(--k));
+  background:var(--panel);
+  box-shadow:0 calc(10 * var(--k)) calc(30 * var(--k)) rgba(0,0,0,.5), inset 0 0 calc(60 * var(--k)) rgba(0,0,0,.45);
+  overflow:hidden;
+}
+.promo .lbl{
+  font-size:calc(28 * var(--k));letter-spacing:.20em;text-indent:.20em;font-weight:500;
+  background:linear-gradient(180deg,#F7E6B7 0%,#DDB064 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.promo .big{
+  position:relative;display:block;
+  font-family:"Playfair Display",Georgia,serif;font-weight:700;
+  font-size:calc(150 * var(--k));line-height:1;
+  margin:calc(6 * var(--k)) 0 0;
+  background-image:
+    linear-gradient(105deg,rgba(255,255,255,0) 42%,rgba(255,252,235,.8) 50%,rgba(255,255,255,0) 58%),
+    linear-gradient(180deg,#FDF3D3 0%,#EFCC85 32%,#C9973F 62%,#F7E7B6 100%);
+  background-size:200% 100%, 100% 100%;
+  background-position:-90% 0, 0 0;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 calc(3 * var(--k)) calc(10 * var(--k)) rgba(0,0,0,.55));
+}
+#invite.show .promo .big{animation:sheen 5.5s var(--ease) 2s infinite}
+.promo .big::before,.promo .big::after{
+  content:"";position:absolute;top:52%;width:calc(46 * var(--k));height:calc(46 * var(--k));
+  transform:translateY(-50%);
+  background:
+    radial-gradient(circle,rgba(255,240,200,.95) 0%,rgba(255,225,150,0) 62%),
+    conic-gradient(from 0deg,rgba(255,240,200,0) 0deg,rgba(255,240,200,.9) 90deg,rgba(255,240,200,0) 180deg,rgba(255,240,200,.9) 270deg,rgba(255,240,200,0) 360deg);
+  -webkit-mask:radial-gradient(circle,#000 0%,transparent 70%);
+  mask:radial-gradient(circle,#000 0%,transparent 70%);
+  opacity:.9;
+}
+#invite.show .promo .big::before,#invite.show .promo .big::after{animation:twinkle 3.4s ease-in-out infinite}
+.promo .big::before{left:calc(38 * var(--k))}
+.promo .big::after{right:calc(38 * var(--k))}
+#invite.show .promo .big::after{animation-delay:1.2s}
+@keyframes twinkle{0%,100%{opacity:.35;transform:translateY(-50%) scale(.85) rotate(0)}50%{opacity:1;transform:translateY(-50%) scale(1.12) rotate(45deg)}}
+.promo .mid{
+  display:block;font-weight:700;font-size:calc(46 * var(--k));
+  letter-spacing:.14em;text-indent:.14em;margin-top:calc(-4 * var(--k));
+  background:linear-gradient(180deg,#FBEDC6 0%,#E6C176 45%,#B98A38 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.promo .sub{
+  display:block;margin-top:calc(8 * var(--k));
+  font-size:calc(21 * var(--k));letter-spacing:.10em;text-indent:.10em;
+  color:#EFE2CB;opacity:.92;
+}
+
+/* --- geri sayım --- */
+.cd-title{
+  margin:calc(26 * var(--k)) 0 0;
+  font-size:calc(27 * var(--k));letter-spacing:.22em;text-indent:.22em;font-weight:500;
+  background:linear-gradient(180deg,#F7E6B7 0%,#D9AB5E 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.countdown{
+  display:flex;align-items:center;justify-content:center;
+  gap:calc(9 * var(--k));
+  margin:calc(16 * var(--k)) auto 0;
+}
+.cd{
+  width:calc(152 * var(--k));padding:calc(11 * var(--k)) 0 calc(10 * var(--k));
+  border:1px solid var(--gold-line-soft);border-radius:calc(9 * var(--k));
+  background:linear-gradient(180deg,rgba(58,9,13,.78),rgba(30,4,7,.86));
+  box-shadow:inset 0 0 calc(24 * var(--k)) rgba(0,0,0,.5);
+}
+.cd b{
+  display:block;font-family:"Playfair Display",Georgia,serif;font-weight:500;
+  font-size:calc(52 * var(--k));line-height:1;
+  background:linear-gradient(180deg,#FBEDC6 0%,#E6C176 48%,#C0913F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  transition:transform .3s var(--ease);
+}
+.cd b.tick{transform:translateY(calc(-4 * var(--k))) scale(1.04)}
+.cd span{
+  display:block;margin-top:calc(3 * var(--k));
+  font-size:calc(19 * var(--k));letter-spacing:.16em;text-indent:.16em;
+  color:#E3CFA8;opacity:.88;
+}
+.dot{width:calc(4 * var(--k));height:calc(4 * var(--k));border-radius:50%;background:var(--gold-3);opacity:.75;flex:none}
+
+/* --- tarih / saat / konum --- */
+.inforow{
+  display:flex;align-items:stretch;justify-content:center;
+  margin:calc(22 * var(--k)) auto 0;width:92%;
+}
+.info{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:calc(9 * var(--k));
+  padding:0 calc(8 * var(--k));text-align:left;
+}
+.info + .info{border-left:1px solid rgba(196,146,70,.30)}
+.info svg{width:calc(30 * var(--k));height:calc(30 * var(--k));flex:none;stroke:var(--gold-2);fill:none;stroke-width:1.5}
+.info p{
+  margin:0;font-size:calc(21 * var(--k));line-height:1.30;
+  color:#F0E5D2;letter-spacing:.02em;
+}
+.info p em{display:block;font-style:normal;opacity:.85;font-size:calc(20 * var(--k))}
+
+.orn-btn{width:30%;margin:calc(20 * var(--k)) auto 0;opacity:.9}
+
+/* --- butonlar --- */
+.actions{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:calc(20 * var(--k));
+  width:84.6%;margin:calc(16 * var(--k)) auto 0;
+}
+.btn{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:calc(11 * var(--k));
+  padding:calc(18 * var(--k)) calc(4 * var(--k)) calc(16 * var(--k));
+  min-height:calc(124 * var(--k));
+  border:1px solid var(--gold-line-soft);border-radius:calc(14 * var(--k));
+  background:linear-gradient(180deg,rgba(74,12,17,.80),rgba(34,5,8,.88));
+  box-shadow:0 calc(6 * var(--k)) calc(18 * var(--k)) rgba(0,0,0,.45), inset 0 1px 0 rgba(255,220,150,.10);
+  color:#F2E6CE;text-decoration:none;
+  transition:transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+}
+.btn svg{width:calc(36 * var(--k));height:calc(36 * var(--k));stroke:var(--gold-2);fill:none;stroke-width:1.5}
+.btn span{
+  font-size:calc(20 * var(--k));line-height:1.2;letter-spacing:.10em;text-indent:.10em;
+  color:#EFE1C6;
+}
+.btn::after{
+  content:"";position:absolute;top:0;bottom:0;width:45%;
+  background:linear-gradient(100deg,transparent,rgba(255,236,190,.16),transparent);
+  transform:translateX(-260%);transition:transform .75s var(--ease);
+}
+.btn:hover{transform:translateY(calc(-4 * var(--k)));border-color:rgba(233,197,124,.85);
+  box-shadow:0 calc(12 * var(--k)) calc(28 * var(--k)) rgba(0,0,0,.55), 0 0 calc(22 * var(--k)) rgba(216,166,86,.30), inset 0 1px 0 rgba(255,220,150,.18)}
+.btn:hover::after{transform:translateX(260%)}
+.btn:active{transform:translateY(0) scale(.96)}
+.btn:focus-visible{outline:2px solid var(--gold-2);outline-offset:calc(3 * var(--k))}
+.btn.wide{
+  grid-column:1 / -1;flex-direction:row;min-height:calc(78 * var(--k));
+  gap:calc(14 * var(--k));
+}
+
+/* ============================================================
+   3. RSVP MODAL
+   ============================================================ */
+.modal{
+  position:fixed;inset:0;z-index:70;
+  display:grid;place-items:center;padding:calc(24 * var(--k));
+  background:rgba(10,1,3,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility .35s;
+}
+.modal.open{opacity:1;visibility:visible}
+.dialog{
+  position:relative;width:min(92vw,430px);
+  padding:calc(30 * var(--k)) calc(28 * var(--k)) calc(26 * var(--k));
+  background:linear-gradient(165deg,#3C0A10 0%,#220508 60%,#2C070B 100%);
+  background-color:#2A060A;
+  border:calc(2 * var(--k)) solid var(--gold-line);border-radius:calc(14 * var(--k));
+  box-shadow:0 calc(24 * var(--k)) calc(60 * var(--k)) rgba(0,0,0,.7);
+  transform:translateY(calc(24 * var(--k))) scale(.96);
+  transition:transform .4s var(--ease-out);
+  max-height:88dvh;overflow:auto;
+}
+.modal.open .dialog{transform:none}
+.dialog h3{
+  margin:0;text-align:center;font-weight:600;
+  font-size:calc(40 * var(--k));letter-spacing:.08em;
+  background:linear-gradient(180deg,#FBEFCC 0%,#E7C179 48%,#B4842F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.dialog .note{
+  margin:calc(4 * var(--k)) 0 calc(18 * var(--k));text-align:center;
+  font-size:calc(22 * var(--k));color:#E6D8BE;opacity:.85;
+}
+.field{margin-bottom:calc(13 * var(--k));text-align:left}
+.field label{
+  display:block;margin:0 0 calc(5 * var(--k)) calc(2 * var(--k));
+  font-size:calc(20 * var(--k));letter-spacing:.14em;color:#E0CCA4;
+}
+.field input,.field textarea,.field select{
+  width:100%;padding:calc(12 * var(--k)) calc(13 * var(--k));
+  font-family:inherit;font-size:calc(23 * var(--k));
+  color:#FBF3E4;background:rgba(14,2,4,.62);
+  border:1px solid rgba(196,146,70,.42);border-radius:calc(9 * var(--k));
+  transition:border-color .25s,box-shadow .25s;
+}
+.field textarea{resize:vertical;min-height:calc(76 * var(--k))}
+.field input:focus,.field textarea:focus,.field select:focus{
+  outline:none;border-color:var(--gold-2);box-shadow:0 0 0 calc(3 * var(--k)) rgba(216,166,86,.16)
+}
+.field.err input,.field.err select{border-color:#D9756A}
+.submit{
+  width:100%;margin-top:calc(6 * var(--k));
+  padding:calc(15 * var(--k));
+  font-size:calc(25 * var(--k));font-weight:600;letter-spacing:.22em;text-indent:.22em;
+  color:#2A0A05;border-radius:calc(10 * var(--k));
+  background:linear-gradient(180deg,#F7E3AE 0%,#E0B265 48%,#C08F35 100%);
+  box-shadow:0 calc(8 * var(--k)) calc(20 * var(--k)) rgba(0,0,0,.45);
+  transition:transform .22s var(--ease),filter .22s;
+}
+.submit:hover{filter:brightness(1.08)}
+.submit:active{transform:scale(.97)}
+.close{
+  position:absolute;top:calc(8 * var(--k));right:calc(10 * var(--k));
+  width:calc(44 * var(--k));height:calc(44 * var(--k));
+  font-size:calc(30 * var(--k));color:#E4C88E;line-height:1;
+}
+.done{text-align:center;padding:calc(14 * var(--k)) 0 calc(6 * var(--k))}
+.done svg{width:calc(70 * var(--k));height:calc(70 * var(--k));stroke:var(--gold-2);fill:none;stroke-width:1.4;margin:0 auto}
+.done p{font-size:calc(25 * var(--k));color:#F2E6CE;margin:calc(12 * var(--k)) 0 0;line-height:1.4}
+[hidden]{display:none !important}
+
+/* ---------- erişilebilirlik / hareket azaltma ---------- */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.12s !important}
+  .rv{opacity:1;transform:none}
+}
+
+</style>
+</head>
+<body class="locked">
+
+<div class="velvet" aria-hidden="true"></div>
+
+<!-- ==================== KAPAK ==================== -->
+<section id="cover" role="button" tabindex="0" aria-label="Mühre dokunun ve davetiyeyi açın">
+  <div class="stage">
+    <img class="scene" src="assets/kapak.jpg" alt="Kadife perde önünde altın mühürlü davetiye zarfı">
+  </div>
+</section>
+
+<!-- ==================== AÇILIŞ VİDEOSU ==================== -->
+<div id="videoLayer" aria-hidden="true">
+  <video id="openVideo" playsinline webkit-playsinline preload="auto"></video>
+</div>
+<!-- ==================== DAVETİYE ==================== -->
+<main id="invite">
+  <div class="sheet">
+
+    <img class="logo rv" src="assets/logo.png" alt="Güzellik Merkezi logosu">
+
+    <h1 class="brand rv">GÜZELLİK MERKEZİ</h1>
+
+    <h2 class="head rv">BÜYÜK AÇILIŞIMIZA</h2>
+    <p class="script rv">Davetlisiniz!</p>
+    <img class="orn-sm rv" src="assets/sup-kucuk.png" alt="">
+
+    <p class="invite-text rv">Bu özel günümüzde sizleri de<br>aramızda görmekten mutluluk duyarız.</p>
+
+    <figure class="photo frame rv">
+      <i class="cnr c1"></i><i class="cnr c2"></i><i class="cnr c3"></i><i class="cnr c4"></i>
+      <img src="assets/foto.jpg" alt="Güzellik merkezi iç mekânı">
+    </figure>
+
+    <section class="promo frame rv" aria-label="Açılışa özel kampanya">
+      <i class="cnr c1"></i><i class="cnr c2"></i><i class="cnr c3"></i><i class="cnr c4"></i>
+      <p class="lbl">AÇILIŞA ÖZEL</p>
+      <b class="big">%30</b>
+      <b class="mid">İNDİRİM</b>
+      <span class="sub">TÜM HİZMETLERDE GEÇERLİDİR.</span>
+    </section>
+
+    <p class="cd-title rv">AÇILIŞA KALAN SÜRE</p>
+    <div class="countdown rv" id="countdown" role="timer" aria-live="off">
+      <div class="cd"><b id="cdD">00</b><span>GÜN</span></div>
+      <i class="dot"></i>
+      <div class="cd"><b id="cdH">00</b><span>SAAT</span></div>
+      <i class="dot"></i>
+      <div class="cd"><b id="cdM">00</b><span>DAKİKA</span></div>
+      <i class="dot"></i>
+      <div class="cd"><b id="cdS">00</b><span>SANİYE</span></div>
+    </div>
+
+    <div class="inforow rv">
+      <div class="info">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+        <p id="infoDate">30 AĞUSTOS 2026<em>PAZAR</em></p>
+      </div>
+      <div class="info">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+        <p id="infoTime">13:00<em>AÇILIŞ SAATİ</em></p>
+      </div>
+      <div class="info">
+        <svg viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        <p>ÖRNEK MAH. GÜZELLİK CAD. NO:10<em>ÇANKAYA / ANKARA</em></p>
+      </div>
+    </div>
+
+    <img class="orn-btn rv" src="assets/sup-buton.png" alt="">
+
+    <nav class="actions rv" aria-label="Davetiye işlemleri">
+      <a class="btn" id="btnMap" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        <span>KONUM</span>
+      </a>
+      <a class="btn" id="btnIg" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+        <span>INSTAGRAM</span>
+      </a>
+      <button class="btn" id="btnRsvp">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16.5 9.5"/></svg>
+        <span>KATILIM<br>SAĞLAYACAĞIM</span>
+      </button>
+      <a class="btn" id="btnTel" href="#">
+        <svg viewBox="0 0 24 24"><path d="M5 3.8h3.4l1.6 4-2 1.4a12.4 12.4 0 0 0 6.8 6.8l1.4-2 4 1.6V19a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 3 6.1 2 2 0 0 1 5 3.8z"/></svg>
+        <span>TELEFONU<br>ARA</span>
+      </a>
+      <a class="btn wide" id="btnWeb" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 4 5.7 4 9s-1.4 6.3-4 9c-2.6-2.7-4-5.7-4-9s1.4-6.3 4-9z"/></svg>
+        <span>WEB SİTESİ</span>
+      </a>
+    </nav>
+
+  </div>
+</main>
+
+<!-- ==================== RSVP ==================== -->
+<div class="modal" id="rsvpModal" role="dialog" aria-modal="true" aria-labelledby="rsvpTitle" aria-hidden="true">
+  <div class="dialog">
+    <button class="close" id="rsvpClose" aria-label="Kapat">&times;</button>
+
+    <div id="rsvpForm">
+      <h3 id="rsvpTitle">Katılım Bilgisi</h3>
+      <p class="note">Sizi aramızda görmek için yerinizi ayıralım.</p>
+
+      <div class="field" id="fName">
+        <label for="rName">AD SOYAD</label>
+        <input id="rName" type="text" autocomplete="name" placeholder="Adınız ve soyadınız">
+      </div>
+      <div class="field" id="fTel">
+        <label for="rTel">TELEFON</label>
+        <input id="rTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05__ ___ __ __">
+      </div>
+      <div class="field" id="fQty">
+        <label for="rQty">KAÇ KİŞİ</label>
+        <select id="rQty">
+          <option value="1">1 kişi</option>
+          <option value="2" selected>2 kişi</option>
+          <option value="3">3 kişi</option>
+          <option value="4">4 kişi</option>
+          <option value="5">5 kişi</option>
+          <option value="6+">6 ve üzeri</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="rNote">NOT</label>
+        <textarea id="rNote" placeholder="Eklemek istediğiniz bir not"></textarea>
+      </div>
+
+      <button class="submit" id="rsvpSend">GÖNDER</button>
+    </div>
+
+    <div id="rsvpDone" class="done" hidden>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16.5 9.5"/></svg>
+      <p>Katılımınız alındı.<br>Sizi açılışımızda ağırlamaktan mutluluk duyacağız.</p>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ============================================================
+   MÜŞTERİ AYARLARI — her kopya için yalnızca burası düzenlenir
+   ============================================================ */
+const CONFIG = {
+  storeName : "GÜZELLİK MERKEZİ",
+  eventISO  : "2026-08-30T13:00:00+03:00",
+  maps      : "https://www.google.com/maps/search/?api=1&query=Örnek+Mah.+Güzellik+Cad.+No:10+Çankaya+Ankara",
+  instagram : "https://www.instagram.com/",
+  phone     : "+905555555555",
+  website   : "https://www.example.com",
+  whatsapp  : "905555555555"   // RSVP iletimi için (ülke kodu + numara)
+};
+
+document.getElementById('btnMap').href = CONFIG.maps;
+document.getElementById('btnIg').href  = CONFIG.instagram;
+document.getElementById('btnTel').href = 'tel:' + CONFIG.phone;
+document.getElementById('btnWeb').href = CONFIG.website;
+
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------------- Tarih / saat etiketleri ---------------- */
+(function(){
+  const d = new Date(CONFIG.eventISO);
+  const gun  = ['PAZAR','PAZARTESİ','SALI','ÇARŞAMBA','PERŞEMBE','CUMA','CUMARTESİ'];
+  const ay   = ['OCAK','ŞUBAT','MART','NİSAN','MAYIS','HAZİRAN','TEMMUZ','AĞUSTOS','EYLÜL','EKİM','KASIM','ARALIK'];
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('infoDate').innerHTML =
+    d.getDate() + ' ' + ay[d.getMonth()] + ' ' + d.getFullYear() + '<em>' + gun[d.getDay()] + '</em>';
+  document.getElementById('infoTime').innerHTML =
+    p(d.getHours()) + ':' + p(d.getMinutes()) + '<em>AÇILIŞ SAATİ</em>';
+})();
+
+/* ---------------- Canlı geri sayım (yalnızca dokunuştan sonra) ---------------- */
+let startCountdown = function(){
+  const target = new Date(CONFIG.eventISO).getTime();
+  const g = id => document.getElementById(id);
+  const el = { d:g('cdD'), h:g('cdH'), m:g('cdM'), s:g('cdS') };
+  const p  = n => String(Math.max(0,n)).padStart(2,'0');
+  function set(node, val){
+    if(node.textContent === val) return;
+    node.textContent = val;
+    node.classList.add('tick');
+    setTimeout(()=>node.classList.remove('tick'), 260);
+  }
+  function tick(){
+    const diff = Math.max(0, target - Date.now());
+    const s = Math.floor(diff/1000);
+    set(el.d, p(Math.floor(s/86400)));
+    set(el.h, p(Math.floor(s%86400/3600)));
+    set(el.m, p(Math.floor(s%3600/60)));
+    set(el.s, p(s%60));
+  }
+  tick();
+  setInterval(tick, 1000);
+};
+
+/* ---------------- Bölümlerin sırayla belirmesi ---------------- */
+let startReveals = function(){
+  const items = document.querySelectorAll('.rv');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:.10, rootMargin:'0px 0px -6% 0px'});
+  items.forEach((el,i)=>{
+    el.style.transitionDelay = Math.min(i,9)*140 + 'ms';
+    io.observe(el);
+  });
+};
+
+/* ---------------- AKIŞ: Kapak → Video → Davetiye ---------------- */
+(function(){
+  const cover  = document.getElementById('cover');
+  const layer  = document.getElementById('videoLayer');
+  const video  = document.getElementById('openVideo');
+  const invite = document.getElementById('invite');
+  let started = false, finished = false;
+
+  /* video kaynağını blob olarak hazırla (iOS/Safari uyumu) */
+  video.src = 'assets/acilis.mp4';
+    video.load();
+
+  function showInvite(){
+    if(finished) return;
+    finished = true;
+    layer.classList.add('out');                 // 0.2 sn fade-out
+    setTimeout(()=>{
+      layer.classList.remove('on','out');
+      layer.style.display = 'none';
+      document.body.classList.remove('locked');
+      invite.classList.add('show');             // 1 sn sinematik giriş
+      startCountdown();
+      setTimeout(startReveals, 260);            // içerikler sırayla
+    }, 200);
+  }
+
+  function start(){
+    if(started) return;
+    started = true;
+    cover.classList.add('gone');
+    layer.classList.add('on');
+    layer.setAttribute('aria-hidden','false');
+
+    setTimeout(()=>{ cover.style.display = 'none'; }, 360);
+
+    video.currentTime = 0;
+    const play = video.play();
+    if(play && play.catch){
+      play.catch(()=>{                          // sesli oynatılamazsa sessiz dene
+        video.muted = true;
+        video.play().catch(showInvite);
+      });
+    }
+    video.addEventListener('ended', showInvite, {once:true});
+    video.addEventListener('error', showInvite, {once:true});
+  }
+
+  cover.addEventListener('click', start);
+  cover.addEventListener('keydown', e=>{
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); start(); }
+  });
+})();
+
+/* ---------------- RSVP ---------------- */
+(function(){
+  const modal = document.getElementById('rsvpModal');
+  const form  = document.getElementById('rsvpForm');
+  const done  = document.getElementById('rsvpDone');
+  let lastFocus = null;
+
+  function openModal(){
+    lastFocus = document.activeElement;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('locked');
+    setTimeout(()=>document.getElementById('rName').focus(), 380);
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('locked');
+    if(lastFocus) lastFocus.focus();
+  }
+
+  document.getElementById('btnRsvp').addEventListener('click', openModal);
+  document.getElementById('rsvpClose').addEventListener('click', closeModal);
+  modal.addEventListener('click', e=>{ if(e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+  document.getElementById('rsvpSend').addEventListener('click', ()=>{
+    const name = document.getElementById('rName');
+    const tel  = document.getElementById('rTel');
+    const qty  = document.getElementById('rQty');
+    const note = document.getElementById('rNote');
+    let ok = true;
+
+    document.getElementById('fName').classList.toggle('err', !(ok = name.value.trim().length > 2 && ok));
+    const telOk = tel.value.replace(/\D/g,'').length >= 10;
+    document.getElementById('fTel').classList.toggle('err', !telOk);
+    if(!telOk) ok = false;
+    if(!ok) return;
+
+    const msg =
+      CONFIG.storeName + ' açılış daveti — katılım bildirimi%0A' +
+      'Ad Soyad: ' + encodeURIComponent(name.value.trim()) + '%0A' +
+      'Telefon: '  + encodeURIComponent(tel.value.trim())  + '%0A' +
+      'Kişi: '     + encodeURIComponent(qty.value)         + '%0A' +
+      'Not: '      + encodeURIComponent(note.value.trim() || '-');
+
+    if(CONFIG.whatsapp){
+      window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + msg, '_blank', 'noopener');
+    }
+    form.hidden = true;
+    done.hidden = false;
+    setTimeout(closeModal, 2600);
+  });
+})();
+</script>
+</body>
+</html>
