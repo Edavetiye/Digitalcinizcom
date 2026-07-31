@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Düğün Davetiyesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Marcellus&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ŞABLON: WED-001 · Bordo Dantel (rev. 4 — referans düzene birebir)
+   · Arka plan + bordo çerçeve TAMAMEN SABİT
+   · Animasyon yalnızca yazı, buton ve dekorlarda
+   · 7 ekran: Kapak · Hikâye · Gelin&Damat · Program ·
+     Geri Sayım · Mekân · Katılım
+   ============================================================ */
+:root{
+  --gold:#C9A468;
+  --gold-light:#F0DCAE;
+  --gold-mid:#D9BA84;
+  --gold-deep:#9C7638;
+  --gold-dim:rgba(201,164,104,.45);
+  --gold-hair:rgba(201,164,104,.55);
+  --text:#EAD5AA;
+  --bordo:#4A1F23;
+
+  --scale:.6;
+  --safe-x:0px; --safe-y:0px; --safe-w:320px; --safe-h:680px;
+  --bg-w:565px; --bg-h:1003px;
+  --feather:44px;
+  --bg-img:url("assets/arka-plan.jpg");
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  background:#E0C6AE;
+  font-family:'Cormorant Garamond','Times New Roman',serif;
+  color:var(--text);-webkit-font-smoothing:antialiased;
+}
+.sr{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- SABİT ARKA PLAN ---------- */
+.bg{
+  position:fixed;left:50%;top:var(--bg-top);
+  margin-left:calc(var(--bg-w) / -2);
+  width:var(--bg-w);height:var(--bg-h);
+  background:var(--bg-img) no-repeat;background-size:100% 100%;
+  pointer-events:none;z-index:0;
+}
+
+/* ---------- KAYDIRMA KATMANI ---------- */
+.scroller{
+  position:fixed;inset:0;z-index:2;
+  overflow-y:auto;overflow-x:hidden;
+  scroll-snap-type:y proximity;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent var(--safe-y),
+    #000 calc(var(--safe-y) + var(--feather)),
+    #000 calc(var(--safe-y) + var(--safe-h) - var(--feather)),
+    transparent calc(var(--safe-y) + var(--safe-h)),transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,transparent var(--safe-y),
+    #000 calc(var(--safe-y) + var(--feather)),
+    #000 calc(var(--safe-y) + var(--safe-h) - var(--feather)),
+    transparent calc(var(--safe-y) + var(--safe-h)),transparent 100%);
+}
+.scroller::-webkit-scrollbar{display:none}
+
+/* Güvenli alanın dışında kalan içeriği kesin olarak kapatan perdeler.
+   Arka plan görselini birebir aynı konumda tekrar çizerler, böylece
+   maske desteklenmese bile hiçbir yazı bordo panelin dışına taşımaz. */
+.curtain{position:fixed;left:0;right:0;z-index:3;pointer-events:none;
+  overflow:hidden;background:#E0C6AE}
+.c-top{top:0;height:var(--safe-y)}
+.c-bot{top:calc(var(--safe-y) + var(--safe-h));bottom:0}
+.curtain > i{position:absolute;display:block;left:50%;
+  margin-left:calc(var(--bg-w) / -2);width:var(--bg-w);height:var(--bg-h);
+  background:var(--bg-img) no-repeat;background-size:100% 100%}
+.c-top > i{top:var(--bg-top)}
+.c-bot > i{top:calc(var(--bg-top) - var(--safe-y) - var(--safe-h))}
+.track{padding-top:var(--safe-y);padding-bottom:var(--tail,240px)}
+.rail{width:var(--safe-w);margin:0 auto}
+
+/* ---------- BÖLÜM + SCROLL ANİMASYONU ---------- */
+.sec{
+  position:relative;overflow:hidden;
+  scroll-snap-align:center;
+  min-height:var(--safe-h);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:calc(18px * var(--scale));
+  padding:calc(26px * var(--scale)) 0;
+}
+.sec > *{
+  position:relative;z-index:1;
+  opacity:0;transform:translate3d(0,calc(38px * var(--scale) + 12px),0);
+  transition:opacity .95s cubic-bezier(.22,.61,.36,1),
+             transform 1.05s cubic-bezier(.22,.61,.36,1);
+  will-change:opacity,transform;
+}
+.sec.in > *{opacity:1;transform:translate3d(0,0,0)}
+.sec.out-up > *{transform:translate3d(0,calc(-24px * var(--scale) - 8px),0)}
+.sec.in > :nth-child(1){transition-delay:.04s}
+.sec.in > :nth-child(2){transition-delay:.12s}
+.sec.in > :nth-child(3){transition-delay:.20s}
+.sec.in > :nth-child(4){transition-delay:.28s}
+.sec.in > :nth-child(5){transition-delay:.36s}
+.sec.in > :nth-child(6){transition-delay:.44s}
+.sec.in > :nth-child(7){transition-delay:.52s}
+.sec.in > :nth-child(8){transition-delay:.60s}
+
+/* ---------- ASKILI DANTEL LEVHA (bölüm başlığı) ---------- */
+.sign{width:calc(355px * var(--scale));margin:0 auto}
+.sign-fam{width:calc(300px * var(--scale));margin:0 auto}
+.sign-prog{width:calc(500px * var(--scale));margin:0 auto}
+.sign-prog > i{display:block;width:100%;aspect-ratio:780/961;
+  background:url("assets/levha-program.webp") center/100% 100% no-repeat;
+  filter:drop-shadow(0 calc(5px * var(--scale)) calc(14px * var(--scale)) rgba(22,7,9,.4))}
+.sign-fam > i{display:block;width:100%;aspect-ratio:620/607;
+  background:url("assets/levha-aile.webp") center/100% 100% no-repeat;
+  filter:drop-shadow(0 calc(5px * var(--scale)) calc(14px * var(--scale)) rgba(22,7,9,.4))}
+.sign > i{display:block;width:100%;aspect-ratio:620/717;
+  background:url("assets/levha-baslik.webp") center/100% 100% no-repeat;
+  filter:drop-shadow(0 calc(5px * var(--scale)) calc(14px * var(--scale)) rgba(22,7,9,.4))}
+
+/* ---------- DANTELLİ KALP FOTOĞRAF ÇERÇEVESİ ---------- */
+.photo-heart{width:calc(440px * var(--scale));margin:0 auto}
+.photo-heart > i{display:block;width:100%;aspect-ratio:660/647;
+  background:url("assets/kalp-cerceve.webp") center/100% 100% no-repeat;
+  filter:drop-shadow(0 calc(6px * var(--scale)) calc(16px * var(--scale)) rgba(22,7,9,.45))}
+
+/* ---------- DANTELLİ İSİM KARTI (referans görsel) ---------- */
+.card-lace{position:relative;width:calc(520px * var(--scale));margin:0 auto}
+.card-lace > i{display:block;width:100%;aspect-ratio:640/654;
+  background:url("assets/isim-karti.webp") center/100% 100% no-repeat}
+.ct{position:absolute;transform:translate(-50%,-50%);color:#6B5236;
+  line-height:1;white-space:nowrap;text-align:center}
+.ct-n1{left:49.7%;top:32.8%}
+.ct-n2{left:49.7%;top:56.1%}
+.ct-n1,.ct-n2{font-family:'Pinyon Script',cursive,serif;
+  font-size:calc(102px * var(--scale))}
+.ct-date{left:49.9%;top:76.8%;font-family:'Marcellus',serif;
+  font-size:calc(27px * var(--scale));letter-spacing:.18em;margin-right:-.18em}
+
+/* ---------- TARİH · SAAT · KONUM LEVHASI (referans görsel) ---------- */
+.sign-venue{position:relative;width:calc(445px * var(--scale));margin:0 auto}
+.sign-venue > i{display:block;width:100%;aspect-ratio:579/1237;
+  background:url("assets/levha-konum.webp") center/100% 100% no-repeat;
+  filter:drop-shadow(0 calc(5px * var(--scale)) calc(14px * var(--scale)) rgba(22,7,9,.4))}
+.hot{position:absolute;left:10.2%;top:91.3%;width:79.5%;height:7.7%;
+  display:block;border-radius:999px;cursor:pointer;
+  transition:transform .4s cubic-bezier(.22,.61,.36,1),box-shadow .4s ease}
+.hot:hover{box-shadow:0 0 calc(26px * var(--scale)) rgba(240,220,174,.35)}
+.hot:active{transform:scale(1.04)}
+.hot:focus-visible{outline:1px solid var(--gold-light);outline-offset:3px}
+
+/* ---------- ORNAMENT AYIRICILAR ---------- */
+.div{display:block;width:calc(230px * var(--scale));height:auto;margin:0 auto;color:var(--gold)}
+.div-sm{width:calc(96px * var(--scale))}
+.swirl{display:block;width:calc(70px * var(--scale));margin:0 auto;color:var(--gold);opacity:.9}
+
+/* ---------- TİPOGRAFİ ---------- */
+.eyebrow{font-family:'Marcellus',serif;font-size:calc(21px * var(--scale));
+  letter-spacing:calc(6px * var(--scale));line-height:1.7;
+  text-transform:uppercase;color:var(--gold-mid)}
+.title{font-family:'Marcellus',serif;font-weight:400;
+  font-size:calc(30px * var(--scale));letter-spacing:calc(4.5px * var(--scale));
+  line-height:1.5;text-transform:uppercase;color:var(--gold-light)}
+.label{font-family:'Marcellus',serif;font-size:calc(22px * var(--scale));
+  letter-spacing:calc(5px * var(--scale));text-transform:uppercase;color:var(--gold-mid)}
+.name{font-size:calc(54px * var(--scale));font-weight:500;line-height:1.15;
+  color:var(--gold-light);letter-spacing:calc(.5px * var(--scale))}
+.name-it{font-style:italic;font-size:calc(50px * var(--scale));font-weight:500;
+  line-height:1.2;color:var(--gold-light)}
+.amp{font-size:calc(38px * var(--scale));color:var(--gold);line-height:1.4}
+.parents{font-size:calc(25px * var(--scale));line-height:1.5;color:var(--text)}
+.dateline{font-family:'Marcellus',serif;font-size:calc(22px * var(--scale));
+  letter-spacing:calc(6px * var(--scale));color:var(--gold-mid)}
+.script{font-family:'Pinyon Script',cursive,serif;font-size:calc(62px * var(--scale));
+  color:var(--gold-light);line-height:1.1}
+.quote{font-style:italic;font-size:calc(31px * var(--scale));line-height:1.85;
+  font-weight:400;color:var(--text);max-width:86%}
+.venue-name{font-style:italic;font-size:calc(46px * var(--scale));font-weight:500;
+  color:var(--gold-light);line-height:1.2}
+.stack{display:flex;flex-direction:column;align-items:center;gap:calc(4px * var(--scale))}
+.pin{width:calc(52px * var(--scale));height:calc(52px * var(--scale));color:var(--gold-mid);display:block;margin:0 auto}
+
+/* ---------- PROGRAM TABLOSU ---------- */
+.program{width:80%;border:1px solid var(--gold-dim);border-radius:calc(4px * var(--scale));overflow:hidden}
+.prow{display:grid;grid-template-columns:calc(84px * var(--scale)) 1fr;align-items:stretch;
+  border-top:1px solid var(--gold-dim)}
+.prow:first-child{border-top:0}
+.picon{display:flex;align-items:center;justify-content:center;
+  border-right:1px solid var(--gold-dim);padding:calc(12px * var(--scale)) 0}
+.picon svg{width:calc(34px * var(--scale));height:calc(34px * var(--scale));color:var(--gold-mid)}
+.ptxt{padding:calc(11px * var(--scale)) calc(8px * var(--scale));text-align:center}
+.ptxt time{display:block;font-family:'Marcellus',serif;font-size:calc(30px * var(--scale));
+  color:var(--gold-light);line-height:1.2;font-variant-numeric:tabular-nums}
+.ptxt span{display:block;font-size:calc(23px * var(--scale));color:var(--text);line-height:1.3}
+
+/* ---------- GERİ SAYIM ---------- */
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(10px * var(--scale));width:88%}
+.cell{border:1px solid var(--gold-dim);border-radius:calc(3px * var(--scale));
+  padding:calc(12px * var(--scale)) calc(2px * var(--scale))}
+.cell b{display:block;font-family:'Marcellus',serif;font-weight:400;
+  font-size:calc(38px * var(--scale));color:var(--gold-light);line-height:1.1;
+  font-variant-numeric:tabular-nums}
+.cell span{display:block;font-size:calc(17px * var(--scale));
+  letter-spacing:calc(1.4px * var(--scale));text-transform:uppercase;
+  color:var(--gold-mid);margin-top:calc(3px * var(--scale))}
+
+/* ---------- BUTONLAR ---------- */
+.btn{
+  position:relative;-webkit-appearance:none;appearance:none;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:calc(11px * var(--scale));
+  min-width:calc(268px * var(--scale));
+  padding:calc(15px * var(--scale)) calc(30px * var(--scale));
+  font-family:'Marcellus',serif;font-size:calc(21px * var(--scale));
+  letter-spacing:calc(2.6px * var(--scale));text-transform:uppercase;text-decoration:none;
+  border-radius:999px;
+  transition:transform .4s cubic-bezier(.22,.61,.36,1),
+             box-shadow .4s ease,border-color .4s ease,color .4s ease,filter .4s ease;
+}
+.btn svg{width:calc(21px * var(--scale));height:calc(21px * var(--scale));flex:0 0 auto}
+.btn-gold{
+  color:#4A1F23;
+  background:linear-gradient(180deg,#F3DFB0 0%,#DCBB7E 46%,#BE9550 100%);
+  border:1px solid #F0DCAE;
+  box-shadow:0 calc(5px * var(--scale)) calc(16px * var(--scale)) rgba(22,7,9,.45),
+             inset 0 1px 0 rgba(255,248,226,.75);
+}
+.btn-gold:hover{transform:translateY(calc(-2px * var(--scale) - 1px));filter:brightness(1.06);
+  box-shadow:0 calc(10px * var(--scale)) calc(22px * var(--scale)) rgba(22,7,9,.5),
+             inset 0 1px 0 rgba(255,248,226,.8)}
+.btn-line{
+  color:var(--gold-light);background:transparent;border:1px solid var(--gold-dim);
+}
+.btn-line::before{content:"";position:absolute;inset:calc(4px * var(--scale) + 1px);
+  border:1px solid rgba(201,164,104,.22);border-radius:999px;pointer-events:none;
+  transition:border-color .4s ease}
+.btn-line:hover{transform:translateY(calc(-2px * var(--scale) - 1px));border-color:var(--gold)}
+.btn-line:hover::before{border-color:rgba(201,164,104,.4)}
+.btn:active{transform:scale(1.045)}
+.btn:focus-visible{outline:1px solid var(--gold-light);outline-offset:4px}
+.btns{display:flex;flex-direction:column;align-items:center;gap:calc(14px * var(--scale))}
+
+/* ---------- KATILIM FORMU ---------- */
+.field{width:80%;display:flex;flex-direction:column;gap:calc(9px * var(--scale))}
+.field input,.field select{
+  width:100%;font-family:'Cormorant Garamond',serif;font-size:calc(25px * var(--scale));
+  color:var(--gold-light);background:transparent;border:1px solid var(--gold-dim);
+  border-radius:calc(3px * var(--scale));
+  padding:calc(11px * var(--scale)) calc(14px * var(--scale));
+  text-align:center;outline:none;transition:border-color .3s ease}
+.field input::placeholder{color:rgba(234,213,170,.5)}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field select{appearance:none;-webkit-appearance:none;text-align-last:center}
+.field select option{color:#4A1F23;background:#F0DCAE}
+.note{font-size:calc(21px * var(--scale));color:var(--gold-mid);min-height:1em;
+  letter-spacing:calc(.6px * var(--scale))}
+
+/* ---------- SCROLL İPUCU ---------- */
+.hint{position:fixed;left:50%;z-index:4;pointer-events:none;
+  top:calc(var(--safe-y) + var(--safe-h) - 26px * var(--scale) - 24px);
+  transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:calc(5px * var(--scale));
+  font-family:'Marcellus',serif;font-size:calc(16px * var(--scale));
+  letter-spacing:calc(3px * var(--scale));text-transform:uppercase;
+  color:var(--gold-mid);opacity:.85;transition:opacity .6s ease}
+.hint.gone{opacity:0}
+.hint svg{width:calc(20px * var(--scale));height:calc(20px * var(--scale));
+  animation:nudge 2.2s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(calc(5px * var(--scale)));opacity:1}}
+
+@media (prefers-reduced-motion:reduce){
+  .sec > *{transition-duration:.01ms;transform:none}
+  .sec.out-up > *{transform:none}
+  .hint svg{animation:none}
+  .btn{transition:none}
+}
+
+/* ============================================================
+   KAPAK → VİDEO → DAVETİYE  (müşteri dokununca başlar)
+   ============================================================ */
+body.intro .scroller,
+body.intro .bg{opacity:0}
+.scroller{transition:opacity 1.1s ease}
+.bg{transition:opacity 1.1s ease}
+/* peçe açılırken davetiye tam görünsün diye hızlı belirir */
+body.opened .scroller,
+body.opened .bg{opacity:1;transition:opacity .45s ease}
+
+#cover{position:fixed;inset:0;z-index:60;cursor:pointer;overflow:hidden;
+  background:#EDE6DA;-webkit-tap-highlight-color:transparent;transition:opacity .7s ease}
+#cover.hide{opacity:0;pointer-events:none}
+#cover .cover-img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;user-select:none;-webkit-user-drag:none;
+  animation:coverBreath 4.6s ease-in-out infinite}
+@keyframes coverBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.028)}}
+#cover .cover-hint{position:absolute;left:0;right:0;bottom:5.4%;text-align:center;
+  font-family:'Marcellus',serif;letter-spacing:.26em;text-transform:uppercase;
+  font-size:clamp(11px,3.4vw,14px);color:#8A6B2E;
+  text-shadow:0 1px 10px rgba(255,250,240,.7);
+  animation:hintPulse 2.6s ease-in-out infinite;pointer-events:none}
+#cover .cover-hint b{display:block;font-weight:400;margin-top:.5em;font-size:1.5em;
+  letter-spacing:.12em;color:#7A5C24}
+@keyframes hintPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+#videoLayer{position:fixed;inset:0;z-index:70;background:#EDE6DA;
+  opacity:0;visibility:hidden;transition:opacity .55s ease}
+#videoLayer.show{opacity:1;visibility:visible}
+#videoLayer.hide{opacity:0;visibility:hidden;transition:opacity .95s ease}
+#openVideo{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;background:#EDE6DA}
+
+#revealVeil{position:fixed;inset:0;z-index:80;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 42%,rgba(247,232,196,.98) 0%,
+    rgba(238,216,168,.96) 46%,rgba(228,204,150,.92) 100%);
+  transition:opacity .6s ease}
+
+@media (prefers-reduced-motion:reduce){
+  #cover .cover-img{animation:none}
+  #cover .cover-hint{animation:none}
+  .scroller,.bg{transition:opacity .3s ease}
+}
+</style>
+</head>
+<body class="intro">
+
+<!-- ==================== KAPAK (dokun → davetiyeyi aç) ==================== -->
+<div id="cover" role="button" tabindex="0" aria-label="Davetiyeyi açmak için dokunun">
+  <img class="cover-img" id="coverImg" src="assets/kapak.png" alt="Düğün davetiyesi kapağı">
+  <div class="cover-hint">Açmak için<b>dokunun</b></div>
+</div>
+
+<!-- ==================== AÇILIŞ VİDEOSU (yalnızca dokunuştan sonra oynar) ==================== -->
+<div id="videoLayer" aria-hidden="true">
+  <video id="openVideo" playsinline webkit-playsinline muted preload="auto">
+    <source src="assets/acilis.mp4" type="video/mp4">
+  </video>
+</div>
+<div id="revealVeil" aria-hidden="true"></div>
+
+<!-- ORNAMENT / İKON KÜTÜPHANESİ -->
+<svg class="sr" aria-hidden="true">
+  <symbol id="o-div" viewBox="0 0 230 16">
+    <path d="M2 8h82M146 8h82" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M115 1.5l6.5 6.5-6.5 6.5-6.5-6.5z" fill="currentColor"/>
+    <path d="M100 8c-6-4.5-11-4.5-14 0 3 4.5 8 4.5 14 0zM130 8c6-4.5 11-4.5 14 0-3 4.5-8 4.5-14 0z" fill="currentColor" opacity=".85"/>
+  </symbol>
+  <symbol id="o-heart" viewBox="0 0 96 18">
+    <path d="M2 9h30M64 9h30" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M48 16c-6-4.6-10.5-7.4-10.5-11C37.5 3 39.4 1.4 41.6 1.4c1.9 0 3.2 1.1 6.4 4 3.2-2.9 4.5-4 6.4-4 2.2 0 4.1 1.6 4.1 3.6 0 3.6-4.5 6.4-10.5 11z" fill="none" stroke="currentColor" stroke-width="1.1"/>
+  </symbol>
+  <symbol id="i-rings" viewBox="0 0 24 24">
+    <circle cx="9.2" cy="15" r="4.8" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    <circle cx="15.2" cy="11.8" r="4.8" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    <path d="M13.8 4.2l1.5-2 1.5 2-1.5 2z" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-glasses" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+      <path d="M4 3.6h6l-1 5.4a2 2 0 01-4 0zM7 9.4V19M5 20h4"/>
+      <path d="M14 3.6h6l-1 5.4a2 2 0 01-4 0zM17 9.4V19M15 20h4"/>
+    </g>
+  </symbol>
+  <symbol id="i-dinner" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+      <circle cx="12" cy="12" r="5.6"/><circle cx="12" cy="12" r="2.4"/>
+      <path d="M3 5v5.2a1.6 1.6 0 003.2 0V5M4.6 10.8V19"/>
+      <path d="M20 5c1.2 1.6 1.6 3.4 1.6 5.2h-1.6V19"/>
+    </g>
+  </symbol>
+  <symbol id="i-music" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.2">
+      <path d="M10 17.2V6.4l8.4-2v3.1L10 9.4"/>
+      <circle cx="7.4" cy="17.6" r="2.6"/><circle cx="15.8" cy="15.4" r="2.6"/>
+    </g>
+  </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24">
+    <path d="M12 22s7.6-7.2 7.6-13A7.6 7.6 0 004.4 9c0 5.8 7.6 13 7.6 13z" fill="currentColor"/>
+    <circle cx="12" cy="9" r="2.9" fill="#4A1F23"/>
+  </symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.3">
+      <rect x="3.4" y="5" width="17.2" height="15.4" rx="2"/>
+      <path d="M3.4 10h17.2M8 3.2v3.4M16 3.2v3.4M12 13v4.2M9.9 15.1h4.2"/>
+    </g>
+  </symbol>
+  <symbol id="i-heart-s" viewBox="0 0 24 24">
+    <path d="M12 20.4c-8-6-10-9-10-12.6C2 4.6 4.5 2.4 7.4 2.4c2.2 0 3.7 1.2 4.6 2.5.9-1.3 2.4-2.5 4.6-2.5 2.9 0 5.4 2.2 5.4 5.4 0 3.6-2 6.6-10 12.6z" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<div class="bg" role="img" aria-label="Krem dantel desenli, bordo çerçeveli davetiye arka planı"></div>
+
+<div class="scroller" id="scroller">
+ <div class="track">
+  <div class="rail">
+
+   <!-- 1 · DANTELLİ İSİM KARTI -->
+   <section class="sec" data-key="card">
+     <div class="card-lace">
+       <i></i>
+       <span class="ct ct-n1" id="cardBride">Ayşe</span>
+       <span class="ct ct-n2" id="cardGroom">Mehmet</span>
+       <span class="ct ct-date" data-bind="dateDots">12 · 09 · 2026</span>
+     </div>
+   </section>
+
+   <!-- 2 · KAPAK -->
+   <section class="sec" data-key="cover">
+     <div class="photo-heart"><i></i></div>
+     <p class="eyebrow">Düğünümüze<br>Davetlisiniz</p>
+     <div class="stack">
+       <p class="name" id="brideFull">Elif Yılmaz</p>
+       <p class="amp">&amp;</p>
+       <p class="name" id="groomFull">Emre Demir</p>
+     </div>
+     <svg class="div" viewBox="0 0 230 16"><use href="#o-div"/></svg>
+     <p class="dateline" data-bind="dateBig"></p>
+   </section>
+
+   <!-- 3 · HİKÂYEMİZ -->
+   <section class="sec" data-key="story">
+     <div class="sign"><i></i></div>
+     <p class="quote">Bir bahar akşamı başlayan yolculuğumuz, bugün sonsuz bir sevgiyle yeni bir başlangıca dönüşüyor…</p>
+     <svg class="div" viewBox="0 0 230 16"><use href="#o-div"/></svg>
+   </section>
+
+   <!-- 4 · GELİN & DAMAT -->
+   <section class="sec" data-key="couple">
+     <div class="sign-fam"><i></i></div>
+     <div class="stack">
+       <p class="label">Gelin</p>
+       <p class="name-it" id="brideIt">Elif Yılmaz</p>
+       <p class="parents" id="brideParents">Ayşe &amp; Mehmet Yılmaz</p>
+     </div>
+     <svg class="div" viewBox="0 0 230 16"><use href="#o-div"/></svg>
+     <div class="stack">
+       <p class="label">Damat</p>
+       <p class="name-it" id="groomIt">Emre Demir</p>
+       <p class="parents" id="groomParents">Sevgi &amp; Kemal Demir</p>
+     </div>
+   </section>
+
+   <!-- 5 · PROGRAM -->
+   <section class="sec" data-key="flow">
+     <div class="sign-prog"><i></i></div>
+   </section>
+
+   <!-- 6 · TARİH · SAAT · KONUM -->
+   <section class="sec" data-key="venue">
+     <div class="sign-venue">
+       <i></i>
+       <a class="hot" id="mapBtn" href="#" target="_blank" rel="noopener" aria-label="Yol tarifi al"></a>
+     </div>
+     <button class="btn btn-line" id="icsBtn" type="button">
+       <svg viewBox="0 0 24 24"><use href="#i-cal"/></svg>Takvime Ekle
+     </button>
+   </section>
+
+   <!-- 7 · GERİ SAYIM -->
+   <section class="sec" data-key="countdown">
+     <h2 class="title">Büyük Gün<br>Yaklaşıyor</h2>
+     <div class="count">
+       <div class="cell"><b id="cd-d">00</b><span>Gün</span></div>
+       <div class="cell"><b id="cd-h">00</b><span>Saat</span></div>
+       <div class="cell"><b id="cd-m">00</b><span>Dk</span></div>
+       <div class="cell"><b id="cd-s">00</b><span>Sn</span></div>
+     </div>
+     <p class="quote" id="cd-msg">Sizinle bu mutluluğu paylaşmak için sabırsızlanıyoruz.</p>
+     <svg class="div" viewBox="0 0 230 16"><use href="#o-div"/></svg>
+   </section>
+
+   <!-- 8 · KATILIM ONAYI -->
+   <section class="sec" data-key="rsvp">
+     <svg class="div div-sm" viewBox="0 0 230 16"><use href="#o-div"/></svg>
+     <p class="quote">Katılımınız bizim için en değerli hediyedir.</p>
+     <svg class="div" viewBox="0 0 96 18" style="width:calc(70px * var(--scale))"><use href="#o-heart"/></svg>
+     <p class="quote">Sizi aramızda görmekten büyük mutluluk duyacağız.</p>
+     <div class="field">
+       <input id="rsvpName" type="text" placeholder="Adınız ve soyadınız" autocomplete="name">
+       <select id="rsvpCount" aria-label="Kişi sayısı">
+         <option value="1">1 kişi</option><option value="2">2 kişi</option>
+         <option value="3">3 kişi</option><option value="4">4 kişi</option>
+         <option value="5">5 kişi ve üzeri</option>
+       </select>
+     </div>
+     <div class="btns">
+       <button class="btn btn-gold" type="button" data-rsvp="yes"><svg viewBox="0 0 24 24"><use href="#i-heart-s"/></svg>Katılıyorum</button>
+       <button class="btn btn-line" type="button" data-rsvp="no">Katılamıyorum</button>
+     </div>
+     <p class="note" id="rsvpNote"></p>
+   </section>
+
+   <!-- 9 · MÜZİK (isteğe bağlı · dosya yoksa otomatik kalkar) -->
+   <section class="sec" data-key="music">
+     <p class="label">Müzik</p>
+     <svg class="div div-sm" viewBox="0 0 230 16"><use href="#o-div"/></svg>
+     <button class="btn btn-line" id="musicBtn" type="button">
+       <svg viewBox="0 0 24 24"><use href="#i-music"/></svg><span id="musicLabel">Müziği Başlat</span>
+     </button>
+   </section>
+
+  </div>
+ </div>
+</div>
+
+<div class="curtain c-top" aria-hidden="true"><i></i></div>
+<div class="curtain c-bot" aria-hidden="true"><i></i></div>
+
+<div class="hint" id="hint">
+  <span>Kaydırın</span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 4v14M6 13l6 6 6-6"/></svg>
+</div>
+
+<audio id="audio" loop preload="none"></audio>
+
+<script>
+/* ============================================================
+   AKIŞ: KAPAK → (dokun) → VİDEO → DAVETİYE
+   - Video yalnızca müşteri dokununca başlar (önce oynamaz).
+   - Kapaktan videoya geçiş, video gerçekten oynamaya başlayınca
+     yapılır; böylece siyah/boş kare görünmez (geçiş belli olmaz).
+   - Video bitince altın parıltı + çapraz geçişle davetiye belirir.
+   ============================================================ */
+(function openingFlow(){
+  const cover = document.getElementById('cover');
+  const layer = document.getElementById('videoLayer');
+  const video = document.getElementById('openVideo');
+  const veil  = document.getElementById('revealVeil');
+  const scroller = document.getElementById('scroller');
+  if(!cover || !layer || !video){ document.body.classList.remove('intro'); return; }
+  let started=false, revealed=false, videoReady=false;
+
+  /* Videoyu blob olarak hazırla — data: URI ve iOS/Safari dahil her ortamda
+     güvenilir oynatma (aksi halde video oynamayıp davetiye erken açılabiliyor). */
+  (function prepare(){
+    const s = video.querySelector('source');
+    const src = (s && s.getAttribute('src')) || video.getAttribute('src') || '';
+    if(!src) return;
+    fetch(src).then(r=>r.blob()).then(b=>{
+      const u = URL.createObjectURL(b);
+      if(s) s.remove();
+      video.src = u; video.load(); videoReady=true;
+    }).catch(()=>{ /* mevcut source ile denenir */ });
+  })();
+
+  /* Video → davetiye geçişi: altın peçe ekranı kaplar, davetiye peçe
+     altında hazırlanır, peçe açılınca davetiye eksiksiz/temiz belirir. */
+  function reveal(){
+    if(revealed) return; revealed=true;
+    if(veil) veil.style.opacity='1';                 // altın peçe kaplar (.6s)
+    setTimeout(()=>{
+      document.body.classList.remove('intro');
+      document.body.classList.add('opened');
+      cover.classList.add('hide'); layer.classList.add('hide');
+      layer.style.display='none'; cover.style.display='none';
+      try{ video.pause(); }catch(e){}
+      if(scroller) scroller.scrollTop = 0;            // davetiye baştan
+    }, 540);
+    setTimeout(()=>{ if(veil) veil.style.opacity='0'; }, 760);  // peçe açılır
+  }
+
+  function start(){
+    if(started) return; started=true;
+    video.addEventListener('playing', ()=>{           // video oynar oynamaz ANINDA geç
+      layer.style.transition='none';                  // çapraz geçiş yok (hayalet/üst üste binme olmaz)
+      layer.classList.add('show');
+      void layer.offsetWidth;                         // reflow
+      layer.style.transition='';                      // sonraki gizleme için geri al
+      cover.style.display='none';                     // kapak anında kalkar
+    }, {once:true});
+    video.addEventListener('ended', reveal, {once:true});
+    video.addEventListener('error', reveal, {once:true});
+    setTimeout(reveal, 8000);                          // güvenlik (video ~3.4 sn)
+    try{ video.currentTime=0; }catch(e){}
+    const p = video.play();
+    if(p && p.catch){ p.catch(()=>{ video.muted=true; const p2=video.play(); if(p2&&p2.catch) p2.catch(reveal); }); }
+  }
+
+  cover.addEventListener('click', start);
+  cover.addEventListener('touchend', e=>{ e.preventDefault(); start(); }, {passive:false});
+  cover.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); start(); } });
+})();
+
+/* ============================================================
+   YAPILANDIRMA — müşteri kopyasında yalnızca burası değişir
+   ============================================================ */
+const CONFIG = {
+  templateId:"WED-001",
+  bride:"Elif", brideSurname:"Yılmaz", brideParents:"Ayşe & Mehmet Yılmaz",
+  groom:"Emre", groomSurname:"Demir", groomParents:"Sevgi & Kemal Demir",
+  dateISO:"2026-09-12T18:00:00+03:00",
+  endISO:"2026-09-13T00:00:00+03:00",
+  timeText:"18.00",
+  timeLabel:"Saat",
+  placeShort:"Beyaz Bahçe",
+  venueName:"Beyaz Bahçe Kır Düğünü",
+  venueAddress:"Zekeriyaköy, Sarıyer / İstanbul",
+  mapsUrl:"https://maps.google.com/?q=Zekeriyak%C3%B6y%20Sar%C4%B1yer%20%C4%B0stanbul",
+  rsvpPhone:"905551112233",
+  musicUrl:"",
+  // card:false -> dantelli isim kartı sayfası kapalı (true yapınca geri gelir)
+  sections:{card:false,cover:true,story:true,couple:true,flow:true,
+            venue:true,countdown:true,rsvp:true,music:true}
+};
+
+(function sections(){
+  if(!CONFIG.musicUrl) CONFIG.sections.music=false;
+  document.querySelectorAll('.sec[data-key]').forEach(s=>{
+    if(CONFIG.sections[s.dataset.key]===false) s.remove();
+  });
+})();
+
+(function bind(){
+  const d=new Date(CONFIG.dateISO);
+  const M=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+  const D=["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+  const up=s=>s.toLocaleUpperCase('tr-TR');
+  const pad2=n=>String(n).padStart(2,'0');
+  const vals={
+    dateBig:d.getDate()+" "+M[d.getMonth()]+" "+d.getFullYear(),
+    dayNum:String(d.getDate()).padStart(2,'0'),
+    monthUp:up(M[d.getMonth()]),
+    year:String(d.getFullYear()),
+    weekdayUp:up(D[d.getDay()]),
+    timeText:CONFIG.timeText,
+    dateDots:pad2(d.getDate())+" · "+pad2(d.getMonth()+1)+" · "+d.getFullYear(),
+    placeShort:CONFIG.placeShort
+  };
+  document.querySelectorAll('[data-bind]').forEach(el=>{
+    const v=vals[el.dataset.bind]; if(v!=null) el.textContent=v;
+  });
+  const set=(id,txt)=>{const el=document.getElementById(id); if(el) el.textContent=txt;};
+  const bFull=CONFIG.bride+" "+CONFIG.brideSurname, gFull=CONFIG.groom+" "+CONFIG.groomSurname;
+  set('brideFull',bFull); set('groomFull',gFull);
+  set('brideIt',bFull);   set('groomIt',gFull);
+  set('brideParents',CONFIG.brideParents); set('groomParents',CONFIG.groomParents);
+  set('cardBride',CONFIG.bride); set('cardGroom',CONFIG.groom);
+  set('timeLabel',CONFIG.timeLabel.toLocaleUpperCase('tr-TR'));
+  const map=document.getElementById('mapBtn'); if(map) map.href=CONFIG.mapsUrl;
+  if(CONFIG.musicUrl) document.getElementById('audio').src=CONFIG.musicUrl;
+})();
+
+/* ============================================================
+   ÖLÇÜ — arka plan 941×1672 · bordo çerçeve x132-806 y151-1610
+   güvenli yazı alanı x205-733 y322-1442
+   ============================================================ */
+const IMG_W=941,IMG_H=1672,FRAME={w:674,h:1459},SAFE={x:205,y:322,w:528,h:1120};
+const scroller=document.getElementById('scroller');
+let lastH=0,lastW=0;
+
+function layout(){
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const scale=Math.min(Math.max(vw/IMG_W,vh/IMG_H),(vw-14)/FRAME.w,(vh-14)/FRAME.h);
+  const R=Math.round;
+  const bgW=R(IMG_W*scale), bgH=R(IMG_H*scale);
+  const bgTop=R((vh-bgH)/2);
+  const sy=bgTop+R(SAFE.y*scale), sh=R(SAFE.h*scale);
+  const r=document.documentElement.style;
+  r.setProperty('--scale',scale);
+  r.setProperty('--bg-w',bgW+'px'); r.setProperty('--bg-h',bgH+'px');
+  r.setProperty('--bg-top',bgTop+'px');
+  r.setProperty('--safe-x',(R((vw-bgW)/2)+R(SAFE.x*scale))+'px');
+  r.setProperty('--safe-y',sy+'px');
+  r.setProperty('--safe-w',R(SAFE.w*scale)+'px');
+  r.setProperty('--safe-h',sh+'px');
+  r.setProperty('--feather',R(sh*0.075)+'px');
+  r.setProperty('--tail',Math.max(0,vh-sy-sh)+'px');
+}
+const isTouch = window.matchMedia('(pointer:coarse)').matches;
+function relayout(force){
+  const w=window.innerWidth, h=window.innerHeight;
+  if(!force){
+    // Dokunmatikte adres çubuğu kaybolup görünürken veya klavye açılırken
+    // innerHeight değişir; arka planı bu yüzden yeniden ölçeklemiyoruz.
+    if(w===lastW){
+      if(!isTouch && h===lastH) return;
+      if(isTouch) return;
+    }
+    const ae=document.activeElement;
+    if(ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) return;
+  }
+  lastW=w; lastH=h; layout();
+}
+lastW=window.innerWidth; lastH=window.innerHeight;
+layout();
+window.addEventListener('orientationchange',()=>setTimeout(()=>relayout(true),180));
+window.addEventListener('resize',()=>relayout(false));
+
+/* ---------- SCROLL ANİMASYONU ---------- */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    const el=e.target;
+    if(e.isIntersecting && e.intersectionRatio>0.18){
+      el.classList.add('in'); el.classList.remove('out-up');
+    }else{
+      el.classList.remove('in');
+      const rb=e.rootBounds;
+      if(rb && e.boundingClientRect.top<rb.top) el.classList.add('out-up');
+      else el.classList.remove('out-up');
+    }
+  });
+},{root:scroller,rootMargin:"-14% 0px -14% 0px",threshold:[0,.18,.4]});
+document.querySelectorAll('.sec').forEach(s=>io.observe(s));
+
+const hint=document.getElementById('hint');
+scroller.addEventListener('scroll',function once(){
+  if(scroller.scrollTop>24){hint.classList.add('gone');scroller.removeEventListener('scroll',once);}
+},{passive:true});
+
+window.addEventListener('wheel',e=>{
+  if(e.target.closest('#scroller')) return;
+  scroller.scrollTop+=e.deltaY;
+},{passive:true});
+window.addEventListener('keydown',e=>{
+  const step=window.innerHeight*.8;
+  if(e.key==='ArrowDown'||e.key===' '){scroller.scrollBy({top:step,behavior:'smooth'});e.preventDefault();}
+  if(e.key==='ArrowUp'){scroller.scrollBy({top:-step,behavior:'smooth'});e.preventDefault();}
+});
+
+/* ---------- GERİ SAYIM ---------- */
+(function countdown(){
+  const t=new Date(CONFIG.dateISO).getTime();
+  const el=id=>document.getElementById(id);
+  const d=el('cd-d'),h=el('cd-h'),m=el('cd-m'),s=el('cd-s'),msg=el('cd-msg');
+  if(!d) return;
+  const p=n=>String(n).padStart(2,'0');
+  function tick(){
+    const diff=t-Date.now();
+    if(diff<=0){d.textContent=h.textContent=m.textContent=s.textContent='00';
+      msg.textContent='Bugün o gün. Mutluluğumuza hoş geldiniz.';return;}
+    const sec=Math.floor(diff/1000);
+    d.textContent=p(Math.floor(sec/86400));
+    h.textContent=p(Math.floor(sec%86400/3600));
+    m.textContent=p(Math.floor(sec%3600/60));
+    s.textContent=p(sec%60);
+  }
+  tick(); setInterval(tick,1000);
+})();
+
+/* ---------- TAKVİME EKLE ---------- */
+const icsBtn=document.getElementById('icsBtn');
+if(icsBtn) icsBtn.addEventListener('click',()=>{
+  const z=iso=>new Date(iso).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const body=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//'+CONFIG.templateId+'//TR','CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT','UID:'+Date.now()+'@davetiye','DTSTAMP:'+z(new Date().toISOString()),
+    'DTSTART:'+z(CONFIG.dateISO),'DTEND:'+z(CONFIG.endISO),
+    'SUMMARY:'+CONFIG.bride+' & '+CONFIG.groom+' Düğün Töreni',
+    'LOCATION:'+CONFIG.venueName+', '+CONFIG.venueAddress,
+    'DESCRIPTION:Düğün davetiyesi','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const url=URL.createObjectURL(new Blob([body],{type:'text/calendar;charset=utf-8'}));
+  const a=document.createElement('a');
+  a.href=url; a.download='dugun-'+CONFIG.bride.toLowerCase()+'-'+CONFIG.groom.toLowerCase()+'.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+});
+
+/* ---------- KATILIM ONAYI ---------- */
+document.querySelectorAll('[data-rsvp]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const nameEl=document.getElementById('rsvpName');
+    const note=document.getElementById('rsvpNote');
+    const name=(nameEl.value||'').trim();
+    if(!name){note.textContent='Lütfen adınızı yazın.';nameEl.focus();return;}
+    const count=document.getElementById('rsvpCount').value;
+    const yes=btn.dataset.rsvp==='yes';
+    const text=yes? name+' — düğününüze '+count+' kişi olarak katılacağım. Tebrikler!'
+                  : name+' — maalesef katılamayacağım. Mutluluklar dilerim.';
+    note.textContent='WhatsApp açılıyor…';
+    window.open('https://wa.me/'+CONFIG.rsvpPhone+'?text='+encodeURIComponent(text),'_blank');
+  });
+});
+
+/* ---------- MÜZİK ---------- */
+const musicBtn=document.getElementById('musicBtn');
+if(musicBtn) musicBtn.addEventListener('click',async()=>{
+  const a=document.getElementById('audio'),l=document.getElementById('musicLabel');
+  try{ if(a.paused){await a.play();l.textContent='Müziği Durdur';}
+       else {a.pause();l.textContent='Müziği Başlat';} }
+  catch(e){ l.textContent='Müzik yüklenemedi'; }
+});
+</script>
+</body>
+</html>
