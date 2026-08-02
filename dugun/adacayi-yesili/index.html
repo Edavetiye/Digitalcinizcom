@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Selim &amp; Hanife &middot; 23.12.2026</title>
+<meta name="theme-color" content="#5b5e49">
+<style>
+  :root{ --sage:#5b5e49; --cream:#f4f0e4; --mist:#d8d2c0; --ink:#5b5e49; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--sage)}
+  body{
+    font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+    color:var(--cream);-webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+    display:grid;place-items:center;
+  }
+
+  /* medya kutusu tam 9:16 — tüm bindirmeler buna göre hizalanır */
+  #frame{
+    position:relative;
+    width:min(100vw, calc(100dvh * 9 / 16));
+    height:min(100dvh, calc(100vw * 16 / 9));
+    container-type:inline-size;
+    overflow:hidden; touch-action:none; user-select:none;
+  }
+
+  .scene{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .22s linear}
+  .scene.on{opacity:1;visibility:visible}
+  .scene>img.son{opacity:0;transition:opacity .15s linear;z-index:2}
+  .scene>img.son.show{opacity:1}
+  .scene>img.ikonlar{opacity:0;background:transparent;transition:opacity .4s ease;z-index:1;pointer-events:none}
+  .scene>img.ikonlar.show{opacity:1}
+  .scene>img,.scene>video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:fill;display:block;background:var(--sage);
+  }
+
+  /* --- 2. sayfa: dönen plak --- */
+  #plakKutu{
+    z-index:4;position:absolute;left:13.1%;top:8.1%;width:42.2%;height:23.7%;
+    border-radius:50%;background:var(--sage);
+    opacity:0;transition:opacity .18s linear;cursor:pointer;
+  }
+  #plakKutu.ready{opacity:1}
+  #plakImg{
+    position:absolute;left:2.65%;top:2.65%;width:94.7%;height:94.7%;
+    border-radius:50%;display:block;will-change:transform;
+  }
+  #plakImg.spin{animation:donsun 3.2s linear infinite}
+  @keyframes donsun{to{transform:rotate(360deg)}}
+  #plakIpucu{
+    z-index:4;position:absolute;left:0;right:0;top:33.5%;text-align:center;
+    font-size:3.1cqw;letter-spacing:.22em;text-transform:uppercase;color:#3c3b30;
+    opacity:0;transition:opacity .5s ease;pointer-events:none;
+  }
+  #plakIpucu.show{opacity:.75}
+
+  /* --- 5. sayfa: kalpteki bağlantı --- */
+  #hsKalp{z-index:4;position:absolute;left:17%;top:56%;width:48%;height:28%;cursor:pointer;border-radius:50% 50% 12% 12%}
+  #hsKalp:active{background:rgba(60,59,48,.08)}
+
+  /* --- 7. sayfa: saatin içindeki geri sayım --- */
+  #sayac{
+    position:absolute;left:31.3%;top:26.5%;width:34%;height:16%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:var(--ink);text-align:center;line-height:1;z-index:4;
+    opacity:0;transition:opacity .5s ease;pointer-events:none;
+  }
+  #sayac.show{opacity:1}
+  #gun{font-size:9cqw;font-weight:600;letter-spacing:-.02em}
+  #gunEtiket{font-size:2.5cqw;letter-spacing:.34em;text-transform:uppercase;margin-top:.35em;opacity:.85}
+  #ss{font-size:3.6cqw;font-weight:500;letter-spacing:.12em;margin-top:.7em;font-variant-numeric:tabular-nums}
+
+  .hotspot{z-index:4;position:absolute;cursor:pointer;border-radius:2cqw}
+  .hotspot:active{background:rgba(90,74,51,.12)}
+  #hsKonum{left:12.5%;top:85.4%;width:25.5%;height:4.6%}
+  #hsEvet{left:61%;top:83.8%;width:28%;height:3.9%}
+  #hsHayir{left:61%;top:87.7%;width:28%;height:3.9%}
+
+  /* --- yön işaretleri --- */
+  .hint{
+    z-index:5;position:absolute;left:50%;bottom:4%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:.55rem;
+    opacity:0;transition:opacity .6s ease;pointer-events:none;
+  }
+  .hint.show{opacity:1}
+  .ring{
+    width:11cqw;height:11cqw;max-width:56px;max-height:56px;border-radius:50%;
+    border:1px solid var(--mist);display:grid;place-items:center;
+    animation:breathe 2.8s ease-in-out infinite;
+  }
+  .ring::after{
+    content:"";width:2.2cqw;height:2.2cqw;max-width:11px;max-height:11px;
+    border-right:1px solid var(--cream);border-bottom:1px solid var(--cream);
+    transform:translateY(-2px) rotate(45deg);
+  }
+  .hint span{font-size:2.5cqw;letter-spacing:.24em;text-transform:uppercase;color:var(--mist)}
+
+  .kaydir{
+    z-index:5;position:absolute;left:50%;bottom:2.6%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:.35rem;
+    opacity:0;transition:opacity .6s ease;pointer-events:none;cursor:pointer;
+  }
+  .kaydir.show{opacity:.8;pointer-events:auto}
+  .kaydir i{
+    display:block;width:3.2cqw;height:3.2cqw;max-width:17px;max-height:17px;
+    border-right:1px solid var(--mist);border-bottom:1px solid var(--mist);
+    rotate:45deg;animation:breathe 2.8s ease-in-out infinite;
+  }
+  .kaydir b{font-size:2.3cqw;font-weight:400;letter-spacing:.24em;text-transform:uppercase;color:var(--mist)}
+  @keyframes breathe{0%,100%{translate:0 0;opacity:.5}50%{translate:0 5px;opacity:1}}
+
+  #toast{
+    z-index:6;position:absolute;left:50%;bottom:12%;transform:translateX(-50%);
+    background:rgba(48,48,38,.92);color:var(--cream);
+    padding:.7em 1.2em;border-radius:2em;font-size:3.1cqw;
+    opacity:0;transition:opacity .3s ease;pointer-events:none;white-space:nowrap;
+  }
+  #toast.show{opacity:1}
+
+  @media (prefers-reduced-motion:reduce){
+    .ring,.kaydir i{animation:none}
+    .scene{transition:none}
+    #plakImg.spin{animation-duration:9s}
+  }
+</style>
+</head>
+<body>
+<div id="frame" role="group" aria-label="Düğün davetiyesi">
+
+  <section class="scene on"><video src="assets/sahne-1.mp4" muted playsinline preload="auto" disablepictureinpicture></video><img class="son" src="assets/son-1.jpg" alt="Davetiyeniz var">
+    <div class="hint show" id="hint0"><div class="ring"></div><span>Dokun</span></div></section>
+
+  <section class="scene"><video src="assets/sahne-2.mp4" muted playsinline preload="none" disablepictureinpicture></video><img class="son" src="assets/son-2.jpg" alt="">
+    <div id="plakKutu" role="button" tabindex="0" aria-label="Şarkıyı başlat"><img id="plakImg" src="assets/plak.png" alt=""></div>
+    <div id="plakIpucu">plağa dokun</div>
+    <div class="kaydir"><i></i><b>kaydır</b></div></section>
+
+  <section class="scene"><video src="assets/sahne-3.mp4" muted playsinline preload="none" disablepictureinpicture></video><img class="son" src="assets/son-3.jpg" alt="">
+    <div class="kaydir"><i></i><b>kaydır</b></div></section>
+
+  <section class="scene"><video src="assets/sahne-4.mp4" muted playsinline preload="none" disablepictureinpicture></video><img class="son" src="assets/son-4.jpg" alt="">
+    <div class="kaydir"><i></i><b>kaydır</b></div></section>
+
+  <section class="scene"><video src="assets/sahne-5.mp4" muted playsinline preload="none" disablepictureinpicture></video><img class="son" src="assets/son-5.jpg" alt="">
+    <div id="hsKalp" role="button" tabindex="0" aria-label="Detaylar için tıkla"></div></section>
+
+  <section class="scene"><video src="assets/sahne-6.mp4" muted playsinline preload="none" disablepictureinpicture></video><img class="ikonlar" src="assets/ikonlar.webp" alt=""><img class="son" src="assets/son-6.jpg" alt="Düğün programı">
+    <div class="kaydir"><i></i><b>kaydır</b></div></section>
+
+
+  <section class="scene"><video src="assets/sahne-7.mp4" muted playsinline preload="none" disablepictureinpicture></video><img class="son" src="assets/son-7.jpg" alt="">
+    <div id="sayac"><div id="gun">—</div><div id="gunEtiket">gün kaldı</div><div id="ss">--:--:--</div></div>
+    <div class="hotspot" id="hsKonum" role="button" tabindex="0" aria-label="Haritada aç"></div>
+    <div class="hotspot" id="hsEvet" role="button" tabindex="0" aria-label="Katılıyorum"></div>
+    <div class="hotspot" id="hsHayir" role="button" tabindex="0" aria-label="Katılmıyorum"></div>
+    <div class="kaydir"><i></i><b>kaydır</b></div></section>
+
+  <section class="scene"><video src="assets/sahne-8.mp4" muted playsinline preload="none" disablepictureinpicture></video><img class="son" src="assets/son-8.jpg" alt=""></section>
+
+  <div id="toast"></div>
+</div>
+
+<audio id="muzik" loop preload="none"></audio>
+
+<script>
+/* ============================================================
+   AYARLAR — sadece bu bloğu düzenlemen yeterli
+   ============================================================ */
+var CONFIG = {
+  tarih: '2026-12-23T19:00:00+03:00',
+  konumURL: 'https://www.google.com/maps/search/?api=1&query=Beyaz%20Bah%C3%A7e%20D%C3%BC%C4%9F%C3%BCn%20Salonu',
+  whatsapp: '',   // örn: '905551234567'  (boşsa buton uyarı gösterir)
+  muzikURL: ''    // örn: 'sarki.mp3'
+};
+/* ========================================================== */
+
+(function(){
+  var frame  = document.getElementById('frame');
+  var scenes = [].slice.call(document.querySelectorAll('.scene'));
+  var SON    = scenes.length - 1;
+  var kutu   = document.getElementById('plakKutu');
+  var disk   = document.getElementById('plakImg');
+  var ipucu  = document.getElementById('plakIpucu');
+  var sayac  = document.getElementById('sayac');
+  var muzik  = document.getElementById('muzik');
+  var toastEl= document.getElementById('toast');
+  var hint0  = document.getElementById('hint0');
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cur = 0, busy = false, plakDokunuldu = false;
+
+  var PLAK = 1, KALP = 4, SAVE = 5, DETAY = 6;
+
+  if(CONFIG.muzikURL) muzik.src = CONFIG.muzikURL;
+
+  function toast(m){
+    toastEl.textContent = m; toastEl.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(function(){ toastEl.classList.remove('show'); }, 2600);
+  }
+  function medya(i){ return scenes[i].querySelector('video'); }
+  function yedek(i){ return scenes[i].querySelector('img.son'); }
+
+  /* video yalnizca gerektiginde yuklenir; bitince yerini son kare goruntusu alir */
+  function yedegeGec(i){
+    var y = yedek(i); if(!y) return;
+    y.classList.add('show');
+    var v = medya(i); if(v){ v.pause(); }
+  }
+  function oynat(i){
+    var v = medya(i); if(!v) return;
+    v.setAttribute('preload','auto');
+
+    function basla(){
+      if(cur !== i) return;
+      try{ v.currentTime = 0; }catch(e){}
+      var p = v.play();
+      if(p && p.catch) p.catch(function(){
+        // ilk deneme iptal edildiyse bir kez daha dene
+        setTimeout(function(){
+          if(cur !== i) return;
+          var q = v.play();
+          if(q && q.catch) q.catch(function(){ yedegeGec(i); bitti(i); });
+        }, 250);
+      });
+    }
+
+    if(v.readyState >= 2){ basla(); }
+    else{
+      v.addEventListener('canplay', basla, {once:true});
+      if(v.readyState === 0) v.load();
+    }
+
+    // 5 sn sonunda hiç kıpırdamadıysa yedeğe düş
+    setTimeout(function(){
+      if(cur === i && v.paused && v.currentTime === 0){ yedegeGec(i); bitti(i); }
+    }, 5000);
+  }
+
+  function hazirla(i){
+    if(i < 0 || i > SON) return;
+    var v = medya(i); if(!v) return;
+    if(v.getAttribute('preload') === 'none'){ v.setAttribute('preload','auto'); v.load(); }
+  }
+
+  /* --- her sayfanın animasyonu yalnızca oraya gelindiğinde --- */
+  function ciz(i){
+    if(i === cur || i < 0 || i > SON) return;
+    var eski = medya(cur); if(eski) eski.pause();
+    scenes[cur].classList.remove('on');
+    scenes[i].classList.add('on');
+    var k = scenes[cur].querySelector('.kaydir'); if(k) k.classList.remove('show');
+    hint0.classList.toggle('show', i === 0);
+    if(i !== PLAK){ kutu.classList.remove('ready'); ipucu.classList.remove('show'); }
+    if(i !== DETAY) sayac.classList.remove('show');
+    cur = i;
+
+    var y = yedek(i); if(y) y.classList.remove('show');
+    var ik0 = scenes[i].querySelector('img.ikonlar'); if(ik0) ik0.classList.remove('show');
+    var v = medya(i);
+    if(v){
+      v.pause();
+      if(reduce){
+        yedegeGec(i); bitti(i);
+      }else{
+        oynat(i);
+        hazirla(i+1);
+        if(HAZIR[i] !== undefined){
+          setTimeout(function(){ if(cur === i) bindirmeAc(i); }, HAZIR[i] * 1000 + 200);
+        }
+      }
+    }else{
+      bitti(i);
+    }
+  }
+
+  /* geri tuşu için tarayıcı geçmişine yazıyoruz */
+  function git(i){
+    if(busy || i === cur || i < 0 || i > SON) return;
+    busy = true;
+    ciz(i);
+    history.pushState({i:i}, '');
+    setTimeout(function(){ busy = false; }, 240);
+  }
+  function geri(){
+    if(cur > 0) history.back();
+  }
+  history.replaceState({i:0}, '');
+  addEventListener('popstate', function(e){
+    var i = (e.state && typeof e.state.i === 'number') ? e.state.i : 0;
+    busy = true; ciz(i); setTimeout(function(){ busy = false; }, 240);
+  });
+
+  /* bindirmeler, altlarındaki öğe animasyonda yerine oturur oturmaz açılır */
+  var HAZIR = {}; HAZIR[PLAK] = 0.55; HAZIR[DETAY] = 0.70;
+
+  function bindirmeAc(i){
+    if(i !== cur) return;
+    if(i === PLAK){
+      if(kutu.classList.contains('ready')) return;
+      kutu.classList.add('ready');
+      if(!plakDokunuldu) setTimeout(function(){ if(cur === PLAK) ipucu.classList.add('show'); }, 400);
+    }
+    if(i === DETAY) sayac.classList.add('show');
+  }
+
+  function bitti(i){
+    if(i !== cur) return;
+    var k = scenes[i].querySelector('.kaydir'); if(k) k.classList.add('show');
+    bindirmeAc(i);
+  }
+
+  scenes.forEach(function(s, i){
+    var v = s.querySelector('video');
+    if(!v) return;
+    var ik = s.querySelector('img.ikonlar');
+    if(ik){
+      v.addEventListener('timeupdate', function(){ if(v.currentTime >= 1.0) ik.classList.add('show'); });
+      v.addEventListener('ended', function(){ ik.classList.add('show'); });
+    }
+    v.addEventListener('ended', function(){ yedegeGec(i); bitti(i); });
+    v.addEventListener('error', function(){ yedegeGec(i); bitti(i); });
+    if(HAZIR[i] !== undefined){
+      v.addEventListener('timeupdate', function(){
+        if(v.currentTime >= HAZIR[i]) bindirmeAc(i);
+      });
+    }
+  });
+
+  /* --- plak: dokununca döner ve şarkı çalar --- */
+  function plagaDokun(e){
+    e.stopPropagation();
+    plakDokunuldu = true;
+    ipucu.classList.remove('show');
+    var calisiyor = disk.classList.toggle('spin');
+    if(!muzik.src) return;
+    if(calisiyor){
+      var p = muzik.play(); if(p && p.catch) p.catch(function(){ toast('Şarkı başlatılamadı'); });
+    }else{
+      muzik.pause();
+    }
+  }
+  kutu.addEventListener('click', plagaDokun);
+  kutu.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') plagaDokun(e); });
+
+  /* --- kalpteki "Buraya Tıkla" → program sayfası --- */
+  function kalbeTikla(e){ e.stopPropagation(); git(SAVE); }
+  document.getElementById('hsKalp').addEventListener('click', kalbeTikla);
+  document.getElementById('hsKalp').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' ') kalbeTikla(e);
+  });
+
+  /* --- konum & katılım --- */
+  function ac(u){ window.open(u, '_blank', 'noopener'); }
+  document.getElementById('hsKonum').addEventListener('click', function(e){ e.stopPropagation(); ac(CONFIG.konumURL); });
+  function rsvp(e, evet){
+    e.stopPropagation();
+    if(!CONFIG.whatsapp){ toast('WhatsApp numarası henüz eklenmedi'); return; }
+    var m = evet ? 'Merhaba, düğününüze katılıyorum. ' : 'Merhaba, maalesef düğününüze katılamayacağım. ';
+    ac('https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(m));
+  }
+  document.getElementById('hsEvet').addEventListener('click', function(e){ rsvp(e, true); });
+  document.getElementById('hsHayir').addEventListener('click', function(e){ rsvp(e, false); });
+
+  /* --- geri sayım --- */
+  var hedef = new Date(CONFIG.tarih).getTime();
+  var gunEl = document.getElementById('gun'), etEl = document.getElementById('gunEtiket'), ssEl = document.getElementById('ss');
+  function iki(n){ return (n < 10 ? '0' : '') + n; }
+  (function tik(){
+    var f = hedef - Date.now();
+    if(f <= 0){ gunEl.textContent = '♥'; etEl.textContent = 'bugün'; ssEl.textContent = '23.12.2026'; }
+    else{
+      var s = Math.floor(f/1000);
+      gunEl.textContent = Math.floor(s/86400);
+      ssEl.textContent = iki(Math.floor(s%86400/3600)) + ':' + iki(Math.floor(s%3600/60)) + ':' + iki(s%60);
+    }
+    setTimeout(tik, 1000);
+  })();
+
+  /* --- gezinme: 1. sayfa dokunmayla, sonrası kaydırmayla --- */
+  frame.addEventListener('click', function(){ if(cur === 0) git(1); });
+  [].slice.call(document.querySelectorAll('.kaydir')).forEach(function(k){
+    k.addEventListener('click', function(e){ e.stopPropagation(); git(cur+1); });
+  });
+
+  var y0 = null, x0 = null;
+  frame.addEventListener('touchstart', function(e){ y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; }, {passive:true});
+  frame.addEventListener('touchend', function(e){
+    if(y0 === null) return;
+    var dy = e.changedTouches[0].clientY - y0, dx = e.changedTouches[0].clientX - x0;
+    if(Math.abs(dy) > 45 && Math.abs(dy) > Math.abs(dx)){ dy < 0 ? git(cur+1) : geri(); }
+    y0 = x0 = null;
+  }, {passive:true});
+
+  frame.addEventListener('wheel', function(e){
+    if(Math.abs(e.deltaY) < 24) return;
+    var now = Date.now();
+    if(now - (frame._w || 0) < 700) return;
+    frame._w = now;
+    e.deltaY > 0 ? git(cur+1) : geri();
+  }, {passive:true});
+
+  addEventListener('keydown', function(e){
+    if(['ArrowDown','ArrowRight',' ','PageDown'].indexOf(e.key) > -1){ e.preventDefault(); git(cur+1); }
+    if(['ArrowUp','ArrowLeft','PageUp','Backspace'].indexOf(e.key) > -1){ e.preventDefault(); geri(); }
+  });
+
+  /* kapak sayfasi da kendi videosundan oynar */
+  if(reduce){ yedegeGec(0); } else { oynat(0); }
+  hazirla(1);
+})();
+</script>
+</body>
+</html>
