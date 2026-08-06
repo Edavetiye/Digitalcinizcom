@@ -54,6 +54,8 @@ export interface Rsvp {
   full_name: string;
   phone: string | null;
   guest_count: number;
+  // Yanında gelen kişilerin isimleri. Tam liste: [full_name, ...guest_names]
+  guest_names: string[];
   attending: boolean;
   note: string | null;
   created_at: string;
@@ -98,8 +100,8 @@ export interface Database {
       };
       rsvps: {
         Row: Rsvp;
-        Insert: Omit<Rsvp, "id" | "created_at"> &
-          Partial<Pick<Rsvp, "id" | "created_at">>;
+        Insert: Omit<Rsvp, "id" | "created_at" | "guest_names"> &
+          Partial<Pick<Rsvp, "id" | "created_at" | "guest_names">>;
         Update: Partial<Omit<Rsvp, "id" | "created_at">>;
       };
       events: {
