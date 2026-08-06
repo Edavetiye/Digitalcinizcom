@@ -8,12 +8,12 @@ export type InvitationStatus = "draft" | "published";
 export type LinkType = "instagram" | "website" | "whatsapp" | "gallery" | "maps";
 
 // Galeri öğeleri jsonb dizisi olarak saklanır.
-export interface GalleryItem {
+export type GalleryItem = {
   url: string;
   alt?: string;
 }
 
-export interface Customer {
+export type Customer = {
   id: string;
   name: string;
   email: string;
@@ -23,7 +23,7 @@ export interface Customer {
   created_at: string;
 }
 
-export interface Invitation {
+export type Invitation = {
   id: string;
   slug: string;
   customer_id: string;
@@ -48,7 +48,7 @@ export interface Invitation {
   updated_at: string;
 }
 
-export interface Rsvp {
+export type Rsvp = {
   id: string;
   invitation_id: string;
   full_name: string;
@@ -60,7 +60,7 @@ export interface Rsvp {
   created_at: string;
 }
 
-export interface EventItem {
+export type EventItem = {
   id: string;
   invitation_id: string;
   title: string;
@@ -69,7 +69,7 @@ export interface EventItem {
   created_at: string;
 }
 
-export interface LinkItem {
+export type LinkItem = {
   id: string;
   invitation_id: string;
   type: LinkType;

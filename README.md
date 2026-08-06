@@ -82,10 +82,10 @@ npm run dev
 ## Geliştirme Planı (modül modül)
 
 1. ✅ **Klasör yapısı** — proje iskeleti ve dizin ağacı
-2. ⬜ **Supabase şeması** — tablolar + Row Level Security politikaları
-3. ⬜ **Authentication** — Supabase Auth, giriş, oturum yönetimi
-4. ⬜ **Admin Paneli** — müşteri ve davetiye CRUD
-5. ⬜ **RSVP** — embed sayfası, form, e-posta bildirimi
+2. ✅ **Supabase şeması** — tablolar (customers, invitations, rsvps, events, links) + RLS
+3. ✅ **Authentication** — Supabase Auth (minimal), giriş, middleware koruması
+4. ✅ **Admin Paneli** — müşteri CRUD + davetiye editörü + canlı önizleme
+5. ⬜ **RSVP** — embed sayfası, form, e-posta bildirimi (Resend)
 6. ⬜ **Müşteri Paneli** — RSVP listesi, Excel/CSV indirme
 
 > Her modül tamamlandığında durulur ve onay beklenir.
