@@ -83,7 +83,6 @@ create table if not exists public.rsvps (
   id             uuid primary key default gen_random_uuid(),
   invitation_id  uuid not null references public.invitations (id) on delete cascade,
   full_name      text not null,
-  phone          text,
   guest_count    integer not null default 1 check (guest_count >= 1),
   attending      boolean not null,
   note           text,

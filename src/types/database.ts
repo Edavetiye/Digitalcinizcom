@@ -52,9 +52,8 @@ export interface Rsvp {
   id: string;
   invitation_id: string;
   full_name: string;
-  phone: string | null;
   guest_count: number;
-  // Yanında gelen kişilerin isimleri. Tam liste: [full_name, ...guest_names]
+  // Beraber gelen kişilerin isimleri (ana kişi hariç). Tam liste: [full_name, ...guest_names]
   guest_names: string[];
   attending: boolean;
   note: string | null;
@@ -91,37 +90,45 @@ export interface Database {
         Insert: Omit<Customer, "id" | "created_at"> &
           Partial<Pick<Customer, "id" | "created_at">>;
         Update: Partial<Omit<Customer, "id" | "created_at">>;
+        Relationships: [];
       };
       invitations: {
         Row: Invitation;
         Insert: Omit<Invitation, "id" | "created_at" | "updated_at" | "gallery"> &
           Partial<Pick<Invitation, "id" | "created_at" | "updated_at" | "gallery">>;
         Update: Partial<Omit<Invitation, "id" | "created_at">>;
+        Relationships: [];
       };
       rsvps: {
         Row: Rsvp;
         Insert: Omit<Rsvp, "id" | "created_at" | "guest_names"> &
           Partial<Pick<Rsvp, "id" | "created_at" | "guest_names">>;
         Update: Partial<Omit<Rsvp, "id" | "created_at">>;
+        Relationships: [];
       };
       events: {
         Row: EventItem;
         Insert: Omit<EventItem, "id" | "created_at"> &
           Partial<Pick<EventItem, "id" | "created_at">>;
         Update: Partial<Omit<EventItem, "id" | "created_at">>;
+        Relationships: [];
       };
       links: {
         Row: LinkItem;
         Insert: Omit<LinkItem, "id" | "created_at"> &
           Partial<Pick<LinkItem, "id" | "created_at">>;
         Update: Partial<Omit<LinkItem, "id" | "created_at">>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
     Functions: {
       current_customer_id: {
         Args: Record<string, never>;
         Returns: string;
       };
     };
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
