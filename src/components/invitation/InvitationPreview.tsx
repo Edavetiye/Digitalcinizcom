@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { getTheme } from "@/lib/themes";
 import { combineDateTime, formatDateTR, formatTimeTR } from "@/lib/utils/date";
 import type { GalleryItem, LinkType } from "@/types/database";
@@ -66,13 +66,16 @@ export default function InvitationPreview({
   data,
   events = [],
   links = [],
-  interactive = false,
+  rsvpSlot,
 }: {
   data: InvitationPreviewData;
   events?: PreviewEvent[];
   links?: PreviewLink[];
-  /** true ise RSVP butonları görünür (embed); false ise yalnızca örnek gösterim. */
-  interactive?: boolean;
+  /**
+   * Embed sayfası buraya interaktif RSVP bileşenini geçer. Verilmezse
+   * (editör önizlemesi) statik örnek butonlar gösterilir.
+   */
+  rsvpSlot?: ReactNode;
 }) {
   const theme = getTheme(data.theme);
   const target =
@@ -291,30 +294,31 @@ export default function InvitationPreview({
         )}
 
         {/* RSVP */}
-        {data.rsvp_enabled !== false && (
-          <div className="space-y-2 pt-2">
-            <p className="text-sm font-medium">Katılım Durumu</p>
-            <div className="flex justify-center gap-3">
-              <span
-                className="rounded-lg px-5 py-2 text-sm font-medium"
-                style={{ background: theme.accent, color: theme.accentText }}
-              >
-                ✅ Katılıyorum
-              </span>
-              <span
-                className="rounded-lg border px-5 py-2 text-sm font-medium"
-                style={{ borderColor: theme.accent, color: theme.accent }}
-              >
-                ❌ Katılmıyorum
-              </span>
-            </div>
-            {!interactive && (
+        {data.rsvp_enabled !== false &&
+          (rsvpSlot ? (
+            <div className="pt-2">{rsvpSlot}</div>
+          ) : (
+            <div className="space-y-2 pt-2">
+              <p className="text-sm font-medium">Katılım Durumu</p>
+              <div className="flex justify-center gap-3">
+                <span
+                  className="rounded-lg px-5 py-2 text-sm font-medium"
+                  style={{ background: theme.accent, color: theme.accentText }}
+                >
+                  ✅ Katılıyorum
+                </span>
+                <span
+                  className="rounded-lg border px-5 py-2 text-sm font-medium"
+                  style={{ borderColor: theme.accent, color: theme.accent }}
+                >
+                  ❌ Katılmıyorum
+                </span>
+              </div>
               <p className="text-[11px]" style={{ color: theme.muted }}>
                 (Önizleme — butonlar yayınlanan sayfada çalışır)
               </p>
-            )}
-          </div>
-        )}
+            </div>
+          ))}
       </div>
     </div>
   );

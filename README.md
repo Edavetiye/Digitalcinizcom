@@ -85,7 +85,7 @@ npm run dev
 2. ✅ **Supabase şeması** — tablolar (customers, invitations, rsvps, events, links) + RLS
 3. ✅ **Authentication** — Supabase Auth (minimal), giriş, middleware koruması
 4. ✅ **Admin Paneli** — müşteri CRUD + davetiye editörü + canlı önizleme
-5. ⬜ **RSVP** — embed sayfası, form, e-posta bildirimi (Resend)
+5. ✅ **RSVP** — `/embed/[slug]` sayfası, popup form, Resend e-posta bildirimi
 6. ⬜ **Müşteri Paneli** — RSVP listesi, Excel/CSV indirme
 
 > Her modül tamamlandığında durulur ve onay beklenir.
