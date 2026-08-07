@@ -1,5 +1,6 @@
 "use server";
 
+import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -43,12 +44,27 @@ export async function uploadBackground(
     return { ok: false, error: e instanceof Error ? e.message : "Bucket hatası." };
   }
 
-  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-  const path = `${invitationId}/${Date.now()}.${ext}`;
-  const bytes = new Uint8Array(await file.arrayBuffer());
+  // Görseli küçült + WebP'e çevir (hızlı yüklensin). sharp başarısız olursa
+  // orijinal dosya yüklenir.
+  const inputBuffer = Buffer.from(await file.arrayBuffer());
+  let outBuffer: Buffer = inputBuffer;
+  let contentType = file.type;
+  let ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  try {
+    outBuffer = await sharp(inputBuffer)
+      .rotate()
+      .resize({ width: 1400, height: 2000, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toBuffer();
+    contentType = "image/webp";
+    ext = "webp";
+  } catch {
+    // Dönüştürme başarısız: orijinali kullan.
+  }
 
-  const { error: upErr } = await admin.storage.from(BUCKET).upload(path, bytes, {
-    contentType: file.type,
+  const path = `${invitationId}/${Date.now()}.${ext}`;
+  const { error: upErr } = await admin.storage.from(BUCKET).upload(path, outBuffer, {
+    contentType,
     upsert: true,
   });
   if (upErr) return { ok: false, error: upErr.message };
