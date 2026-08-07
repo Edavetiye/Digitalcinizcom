@@ -18,6 +18,9 @@ export default async function AdminLayout({
               Admin Panel
             </Link>
             <nav className="flex items-center gap-4 text-sm">
+              <Link href="/admin/quick" className="font-medium text-foreground hover:text-foreground">
+                Hızlı Link
+              </Link>
               <Link href="/admin/customers" className="text-foreground/70 hover:text-foreground">
                 Müşteriler
               </Link>

@@ -24,10 +24,10 @@ export default async function AdminHomePage() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Genel Bakış</h1>
         <Link
-          href="/admin/invitations/new"
+          href="/admin/quick"
           className="rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background"
         >
-          + Yeni Davetiye
+          + Hızlı Link Üret
         </Link>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
