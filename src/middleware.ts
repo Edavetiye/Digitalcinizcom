@@ -34,8 +34,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Middleware YALNIZCA korumalı rotalarda ve login'de çalışır.
-  // Böylece embed (davetli sayfası) ve diğer public sayfalar gereksiz
-  // kimlik doğrulama/oturum turu yapmaz -> çok daha hızlı açılır.
-  matcher: ["/admin/:path*", "/dashboard/:path*", "/login"],
+  // Middleware YALNIZCA korumalı rotalarda çalışır (/admin, /dashboard).
+  // /login ve diğer public sayfalar (embed dahil) gereksiz kimlik/oturum
+  // turu yapmaz -> anında açılır.
+  matcher: ["/admin/:path*", "/dashboard/:path*"],
 };
