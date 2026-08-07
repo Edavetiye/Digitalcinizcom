@@ -34,13 +34,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Aşağıdakiler hariç tüm yollarda çalışır:
-     * - _next/static, _next/image, favicon
-     * - statik medya dosyaları
-     * (embed sayfaları herkese açıktır; middleware yalnızca oturumu tazeler.)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|mp3|ico)$).*)",
-  ],
+  // Middleware YALNIZCA korumalı rotalarda ve login'de çalışır.
+  // Böylece embed (davetli sayfası) ve diğer public sayfalar gereksiz
+  // kimlik doğrulama/oturum turu yapmaz -> çok daha hızlı açılır.
+  matcher: ["/admin/:path*", "/dashboard/:path*", "/login"],
 };
