@@ -1,10 +1,10 @@
-import { requireUser } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+// Not: Kimlik kontrolü middleware + (dashboard) layout tarafından yapılır;
+// burada tekrar getUser çağırmayarak fazladan ağ turu önlenir.
 export default async function CustomerRsvpPage() {
-  await requireUser();
   // Oturum tabanlı client: RLS sayesinde yalnızca müşterinin KENDİ
   // davetiyelerine ait RSVP kayıtları döner.
   const supabase = await createClient();
