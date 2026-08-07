@@ -21,6 +21,9 @@ export default async function AdminLayout({
               <Link href="/admin/quick" className="font-medium text-foreground hover:text-foreground">
                 Hızlı Link
               </Link>
+              <Link href="/admin/backgrounds" className="text-foreground/70 hover:text-foreground">
+                Arka Planlar
+              </Link>
               <Link href="/admin/customers" className="text-foreground/70 hover:text-foreground">
                 Müşteriler
               </Link>
