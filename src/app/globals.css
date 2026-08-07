@@ -9,6 +9,11 @@
   color-scheme: light;
 }
 
+/* İlk boyamada koyu flaş olmasın diye html de beyaz. */
+html {
+  background: #ffffff;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
