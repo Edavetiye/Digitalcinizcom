@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getTheme } from "@/lib/themes";
 
 type Mode = null | "yes" | "no";
@@ -16,6 +16,7 @@ export default function RsvpWidget({
   const [mode, setMode] = useState<Mode>(null);
   const [fullName, setFullName] = useState("");
   const [guestCount, setGuestCount] = useState(1);
+  const [countInput, setCountInput] = useState("1");
   const [guestNames, setGuestNames] = useState<string[]>([]);
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -24,21 +25,17 @@ export default function RsvpWidget({
 
   const attending = mode === "yes";
 
+  // Kişi sayısı değiştikçe "beraber gelen" isim kutularını (count-1) ayarla.
+  useEffect(() => {
+    const needed = Math.max(0, guestCount - 1);
+    setGuestNames((prev) =>
+      Array.from({ length: needed }, (_, i) => prev[i] ?? ""),
+    );
+  }, [guestCount]);
+
   function close() {
     setMode(null);
     setError(null);
-  }
-
-  function updateGuestCount(n: number) {
-    const count = Math.max(1, Math.min(50, n || 1));
-    setGuestCount(count);
-    // Beraber gelen isim kutusu sayısı = count - 1
-    const needed = count - 1;
-    setGuestNames((prev) => {
-      const next = [...prev];
-      next.length = needed;
-      return Array.from({ length: needed }, (_, i) => next[i] ?? "");
-    });
   }
 
   async function submit() {
@@ -164,10 +161,27 @@ export default function RsvpWidget({
                     </span>
                     <input
                       type="number"
+                      inputMode="numeric"
                       min={1}
                       max={50}
-                      value={guestCount}
-                      onChange={(e) => updateGuestCount(Number(e.target.value))}
+                      value={countInput}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        setCountInput(raw);
+                        if (raw === "") return; // yazarken boş bırakmaya izin ver
+                        const n = parseInt(raw, 10);
+                        if (!Number.isNaN(n)) {
+                          setGuestCount(Math.min(50, Math.max(1, n)));
+                        }
+                      }}
+                      onBlur={() => {
+                        const n = Math.min(
+                          50,
+                          Math.max(1, parseInt(countInput || "1", 10) || 1),
+                        );
+                        setGuestCount(n);
+                        setCountInput(String(n));
+                      }}
                       className="w-full rounded-lg border px-3 py-2 text-sm outline-none"
                       style={inputStyle}
                     />
