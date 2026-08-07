@@ -86,6 +86,8 @@ npm run dev
 3. ✅ **Authentication** — Supabase Auth (minimal), giriş, middleware koruması
 4. ✅ **Admin Paneli** — müşteri CRUD + davetiye editörü + canlı önizleme
 5. ✅ **RSVP** — `/embed/[slug]` sayfası, popup form, Resend e-posta bildirimi
-6. ⬜ **Müşteri Paneli** — RSVP listesi, Excel/CSV indirme
+6. ✅ **Müşteri Paneli** — `/dashboard`, kendi RSVP kayıtları (RLS), Excel/CSV indirme
+
+> Tüm modüller tamamlandı. `npm install && npm run dev` ile çalışır.
 
 > Her modül tamamlandığında durulur ve onay beklenir.
